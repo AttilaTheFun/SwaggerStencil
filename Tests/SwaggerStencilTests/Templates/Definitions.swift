@@ -1,7 +1,7 @@
 {% for structure in swagger.definitions %}
-public struct {{ structure.name }} {
+public struct {{ structure.name }}: Codable {
     {% for property in structure.structure.object.properties %}
-    {{ property }}
+    let {{ property|snakeToCamelCase|lowerFirstWord }}: Type
     {% endfor %}
 }
 {% endfor %}
