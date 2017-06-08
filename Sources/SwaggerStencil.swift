@@ -11,7 +11,11 @@ struct SwaggerStencil {
 
 extension Swagger {
     func renderTemplate(templateName: String, environment: Environment) throws -> String {
-        let context = ["swagger": self]
+        let context: [String : Any] = [
+            "swagger": self,
+            "schema": self.definitions.first!.structure
+        ]
+
         return try environment.renderTemplate(name: templateName, context: context)
     }
 }
