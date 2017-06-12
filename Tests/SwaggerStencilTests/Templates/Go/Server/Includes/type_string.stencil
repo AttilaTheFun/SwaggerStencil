@@ -1,0 +1,14 @@
+{% macro typeString schema %}
+{% if schema.structure %}{{ schema.structure.name }}
+{% elif schema.array %}
+{% if schema.array.items.one %}
+[]{% call typeString schema.array.items.one %}
+{% else %}
+UNIMPLEMENTED
+{% endif %}
+{% elif schema.string %}string
+{% elif schema.number %}float64
+{% elif schema.integer %}int64
+{% elif schema.boolean %}bool
+{% else %}interface{}
+{% endif %}{% endmacro %}

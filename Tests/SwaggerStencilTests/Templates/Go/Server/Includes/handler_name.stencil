@@ -1,0 +1,3 @@
+{% macro handlerName path operationType %}
+{{ operationType|capitalize }}{{ path|stripTemplate|snakeToCamelCase }}
+{% endmacro %}
