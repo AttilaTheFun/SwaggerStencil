@@ -1,0 +1,10 @@
+{% macro itemsString items %}
+{% if items.array %}
+{% if items.array.itemss.one %}
+[]{% call itemsString items.array.items.one %}
+{% endif %}
+{% elif items.string %}string
+{% elif items.number %}float64
+{% elif items.integer %}int64
+{% elif items.boolean %}bool
+{% endif %}{% endmacro %}

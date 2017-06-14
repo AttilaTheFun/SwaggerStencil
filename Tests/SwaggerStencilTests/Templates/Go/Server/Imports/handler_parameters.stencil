@@ -1,8 +1,13 @@
+{# Requires: 
+    schema_string.stencil,
+    items_string.stencil,
+    parameter_name.stencil,
+    parameter_type.stencil,
+#}
+
 {% macro handlerParameters operation %}
-{% import "Imports/parameter_name.stencil" %}
 {% map operation.parameters into components %}
-{% call parameterName maploop.item %}
+{% call parameterName maploop.item %} {% call parameterType maploop.item %}
 {% endmap %}
 {{ components|join:", " }}
-{% endimport %}
 {% endmacro %}
