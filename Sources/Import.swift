@@ -1,6 +1,8 @@
 import PathKit
 import Stencil
 
+/// Used to import context from an external file.
+/// The rendered template is not used, but it can push on to the context for the duration of its scope.
 class ImportNode : NodeType {
     let templateName: Variable
     let nodes: [NodeType]

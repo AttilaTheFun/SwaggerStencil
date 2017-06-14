@@ -19,4 +19,9 @@ enum Filters {
         guard let string = value as? String else { throw Filters.Error.invalidInputType }
         return string.toPascal()
     }
+
+    static func toCamel(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.toCamel()
+    }
 }

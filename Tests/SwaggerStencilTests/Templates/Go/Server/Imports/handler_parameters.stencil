@@ -1,0 +1,8 @@
+{% macro handlerParameters operation %}
+{% import "Imports/parameter_name.stencil" %}
+{% map operation.parameters into components %}
+{% call parameterName maploop.item %}
+{% endmap %}
+{{ components|join:", " }}
+{% endimport %}
+{% endmacro %}

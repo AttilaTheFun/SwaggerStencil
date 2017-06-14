@@ -1,6 +1,8 @@
+{% include "Includes/header.stencil" %}
+
 package api
 
-{% import "Includes/type_string.stencil" %}
+{% import "Imports/type_string.stencil" %}
 {% for structure in swagger.definitions %}
 type {{ structure.name|toPascal }} struct {
 	{% for propertyName,property in structure.structure.object.properties %}

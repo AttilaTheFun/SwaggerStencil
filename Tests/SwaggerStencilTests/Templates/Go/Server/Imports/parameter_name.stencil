@@ -1,0 +1,22 @@
+{% macro extractName parameter %}
+{% if parameter.body %}
+{{ parameter.body.fixedFields.name }}
+{% else %}
+{{ parameter.other.fixedFields.name }}
+{% endif %}
+{% endmacro %}
+
+{% macro extractParameter either %}
+{% if either.a %}
+{% call extractName either.a %}
+{% else %}
+{% call extractName either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro parameterName either %}
+{% set name %}
+{% call extractParameter either %}
+{% endset %}
+{{ name|toCamel }}
+{% endmacro %}
