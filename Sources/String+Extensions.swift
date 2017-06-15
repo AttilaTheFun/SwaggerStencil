@@ -175,7 +175,7 @@ extension String {
 // MARK: Pascal Encoding / Decoding
 
 private let acronyms = Set<String>([
-    "id", "uuid", "url",
+    "id", "uuid", "url", "sms"
 ])
 
 extension String {

@@ -1,6 +1,6 @@
 {% macro itemsString items %}
 {% if items.array %}
-{% if items.array.itemss.one %}
+{% if items.array.items.one %}
 []{% call itemsString items.array.items.one %}
 {% endif %}
 {% elif items.string %}string

@@ -1,0 +1,11 @@
+{% macro itemsString items %}
+{% if items.array %}
+{% if items.array.items.one %}
+[{% call itemsString items.array.items.one %}]
+{% endif %}
+{% elif items.string %}String
+{% elif items.number %}Double
+{% elif items.integer %}Int
+{% elif items.boolean %}Bool
+{% endif %}
+{% endmacro %}
