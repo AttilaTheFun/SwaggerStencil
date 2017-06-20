@@ -1,5 +1,18 @@
 import Foundation
 
+// MARK: Padding
+
+extension String {
+
+    func padded(to width: Int) -> String {
+        if self.characters.count >= width {
+            return self
+        }
+
+        return self + String(repeating: " ", count: width - self.characters.count)
+    }
+}
+
 // MARK: Path Parsing
 
 extension String {
@@ -11,7 +24,6 @@ extension String {
     private var isTemplate: Bool {
         return self.hasPrefix("{") && self.hasSuffix("}")
     }
-
 
     func pathToPascal() -> String {
         let components = self.components(separatedBy: "/")
