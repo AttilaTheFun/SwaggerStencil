@@ -5,94 +5,94 @@
 
 package api
 
-// Profile -
+// Profile - 
 type Profile struct {
 
-	// Image URL of the Uber user.
-	Picture string
+    // Image URL of the Uber user.
+    Picture string
 
-	// Promo code of the Uber user.
-	PromoCode string
+    // Promo code of the Uber user.
+    PromoCode string
 
-	// Last name of the Uber user.
-	LastName string
+    // Last name of the Uber user.
+    LastName string
 
-	// Email address of the Uber user
-	Email string
+    // Email address of the Uber user
+    Email string
 
-	// First name of the Uber user.
-	FirstName string
+    // First name of the Uber user.
+    FirstName string
 }
 
-// Error -
+// Error - 
 type Error struct {
-	Fields  string
-	Code    int64
-	Message string
+    Fields  string
+    Code    int64 
+    Message string
 }
 
-// Product -
+// Product - 
 type Product struct {
 
-	// Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles.
-	ProductID string
+    // Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles.
+    ProductID string
 
-	// Description of product.
-	Description string
+    // Description of product.
+    Description string
 
-	// Capacity of product. For example, 4 people.
-	Capacity string
+    // Capacity of product. For example, 4 people.
+    Capacity string
 
-	// Display name of product.
-	DisplayName string
+    // Display name of product.
+    DisplayName string
 
-	// Image URL representing the product.
-	Image string
+    // Image URL representing the product.
+    Image string
 }
 
-// Activities -
+// Activities - 
 type Activities struct {
 
-	// Position in pagination.
-	Offset int64
+    // Position in pagination.
+    Offset int64
 
-	// Number of items to retrieve (100 max).
-	Limit int64
+    // Number of items to retrieve (100 max).
+    Limit int64
 
-	// Total number of items available.
-	Count int64
+    // Total number of items available.
+    Count int64
 
-	History []Activity
+    History []Activity
 }
 
-// Activity -
+// Activity - 
 type Activity struct {
 
-	// Unique identifier for the activity
-	UUID string
+    // Unique identifier for the activity
+    UUID string
 }
 
-// PriceEstimate -
+// PriceEstimate - 
 type PriceEstimate struct {
 
-	// Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles
-	ProductID string
+    // Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles
+    ProductID string
 
-	// Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier.
-	SurgeMultiplier float64
+    // Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier.
+    SurgeMultiplier float64
 
-	// Upper bound of the estimated price.
-	HighEstimate float64
+    // Upper bound of the estimated price.
+    HighEstimate float64
 
-	// Lower bound of the estimated price.
-	LowEstimate float64
+    // Lower bound of the estimated price.
+    LowEstimate float64
 
-	// Display name of product.
-	DisplayName string
+    // Display name of product.
+    DisplayName string
 
-	// Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or "Metered" for TAXI.
-	Estimate string
+    // Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or "Metered" for TAXI.
+    Estimate string
 
-	// [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code.
-	CurrencyCode string
+    // [ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code.
+    CurrencyCode string
 }

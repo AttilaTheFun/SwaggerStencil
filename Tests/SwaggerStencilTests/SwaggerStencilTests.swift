@@ -48,34 +48,37 @@ class SwaggerStencilTests: XCTestCase {
 
     func testExample() throws {
 
+        let templatePath = Path(templateFolderPath + "/Go/Server")
+        let outputPath = Path(templateFolderPath + "/Go/Generated")
+        try outputPath.mkpath()
+
         // Load context:
         let fixture = try self.fixture(named: "uber.json")
         let swagger = try Swagger(JSONString: fixture)
         let context: [String : Any] = [
             "swagger": swagger,
-            "path": generatedFolderPath,
+            "path": outputPath,
         ]
-
-        let fileName = "models.go"
-        let templatePath = Path(templateFolderPath + "/Go/Server")
-        let outputPath = Path(templateFolderPath + "/Go/Generated")
-        try outputPath.mkpath()
-        let outputFile = outputPath + fileName
 
         // Load environment:
         let ext = Extension()
         ext.registerStencilSwiftExtensions()
         ext.registerCustomFilters()
-        let paths = [
-            templatePath
-        ]
-        let loader = FileSystemLoader(paths: paths)
+        let loader = FileSystemLoader(paths: [templatePath])
         let environment = Environment(loader: loader, extensions: [ext],
                                       templateClass: Template.self)
 
         do {
-            let renderedTemplate = try environment.renderTemplate(name: fileName, context: context)
-            try outputFile.write(renderedTemplate)
+            for path in try templatePath.children() {
+                let fileName = path.lastComponent
+                if !path.isFile || !fileName.hasSuffix(".go") {
+                    continue
+                }
+
+                let outputFile = outputPath + fileName
+                let renderedTemplate = try environment.renderTemplate(name: fileName, context: context)
+                try outputFile.write(renderedTemplate)
+            }
         } catch {
             print(error)
         }
