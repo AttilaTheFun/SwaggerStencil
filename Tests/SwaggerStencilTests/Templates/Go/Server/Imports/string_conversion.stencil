@@ -1,0 +1,5 @@
+{# Convert a string parameter into its respective type #}
+
+{% macro convertQueryParameter parameter %}
+{% if item.string %}
+{% endmacro %}

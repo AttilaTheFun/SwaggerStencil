@@ -48,9 +48,11 @@ class SwaggerStencilTests: XCTestCase {
 
     func testExample() throws {
 
-        let templatePath = Path(templateFolderPath + "/Go/Server")
-        let outputPath = Path(templateFolderPath + "/Go/Generated")
-        try outputPath.mkpath()
+        let basePath = Path(templateFolderPath + "/Go/Server")
+        let importsPath = basePath + "Imports"
+        let includesPath = basePath + "Includes"
+        let packagesPath = basePath + "Packages"
+        let outputPath = basePath + "Generated"
 
         // Load context:
         let fixture = try self.fixture(named: "uber.json")
@@ -64,20 +66,35 @@ class SwaggerStencilTests: XCTestCase {
         let ext = Extension()
         ext.registerStencilSwiftExtensions()
         ext.registerCustomFilters()
-        let loader = FileSystemLoader(paths: [templatePath])
+        let paths = [
+            importsPath,
+            includesPath,
+            packagesPath
+        ]
+
+        let loader = FileSystemLoader(paths: paths)
         let environment = Environment(loader: loader, extensions: [ext],
                                       templateClass: Template.self)
 
         do {
-            for path in try templatePath.children() {
-                let fileName = path.lastComponent
-                if !path.isFile || !fileName.hasSuffix(".go") {
+            for packagePath in try packagesPath.children() where packagePath.isDirectory {
+                let packageName = packagePath.lastComponent
+                let generatedPackagePath = outputPath + packageName
+                try generatedPackagePath.mkpath()
+
+                if packageName != "handlers" {
                     continue
                 }
 
-                let outputFile = outputPath + fileName
-                let renderedTemplate = try environment.renderTemplate(name: fileName, context: context)
-                try outputFile.write(renderedTemplate)
+                for filePath in try packagePath.children() where filePath.lastComponent.hasSuffix(".go") {
+                    let fileName = filePath.lastComponent
+                    let generatedFileName = generatedPackagePath + fileName
+                    let templateName = String(describing: Path(packageName) + fileName)
+
+                    let renderedTemplate = try environment.renderTemplate(name: templateName,
+                                                                          context: context)
+                    try generatedFileName.write(renderedTemplate)
+                }
             }
         } catch {
             print(error)

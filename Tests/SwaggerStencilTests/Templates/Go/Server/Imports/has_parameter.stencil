@@ -1,0 +1,30 @@
+{# Requires:
+    schema_string.stencil
+    items_string.stencil
+#}
+
+{# Query Parameters #}
+
+{% macro isQueryParameterHelper parameter %}
+{% set location %}{{ parameter.other.fixedFields.location }}{% endset %}
+{% if location == "query" %}
+true
+{% endif %}
+{% endmacro %}
+
+{% macro isQueryParameter either %}
+{% if either.a %}
+{% call isQueryParameterHelper either.a %}
+{% else %}
+{% call isQueryParameterHelper either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro hasQueryParameter operation %}
+{% for either in operation.parameters %}
+{% set isQuery %}{% call isQueryParameter either %}{% endset %}
+{% if isQuery %}
+true
+{% endif %}
+{% endfor %}
+{% endmacro %}

@@ -1,4 +1,4 @@
-{% include "Includes/header.stencil" %}
+{% include "header.stencil" %}
 package main
 
 import (
@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"{{ path }}/bindings"
+	"{{ path }}/handlers"
 )
 
 {% macro handlerName path operationType %}

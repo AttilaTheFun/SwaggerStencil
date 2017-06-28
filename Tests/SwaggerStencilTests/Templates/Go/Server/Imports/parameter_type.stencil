@@ -1,4 +1,7 @@
-{# Requires schema_string.stencil and items_string.stencil #}
+{# Requires:
+    schema_string.stencil
+    items_string.stencil
+#}
 
 {% macro extractParameterType parameter %}
 {% if parameter.body %}
