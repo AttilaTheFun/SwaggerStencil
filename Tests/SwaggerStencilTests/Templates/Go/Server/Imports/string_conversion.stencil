@@ -1,5 +1,58 @@
-{# Convert a string parameter into its respective type #}
+{# 
+    Convert a string parameter into its respective type.
+    Note: This function assumes the parameter is a query parameter.
+    TODO: Perform validation with items.
+#}
 
-{% macro convertQueryParameter parameter %}
-{% if item.string %}
+{% macro badRequest %}
+if err != nil {
+    w.WriteHeader(400)
+    w.Write([]byte(err.Error()))
+    return
+}
+
+{% endmacro %}
+
+{% macro convertNumberItem name number %}
+{% if number.format.float %}
+{{ name }}64, err := strconv.ParseFloat({{ name }}String, 32)
+{% call badRequest %}
+{{ name }} := {{ name }}64.(float32)
+{% else %}
+{{ name }}, err := strconv.ParseFloat({{ name }}String, 64)
+{% call badRequest %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertIntegerItem name integer %}
+{% if integer.format.int32 %}
+{{ name }}64, err := strconv.ParseInt({{ name }}String, 10, 32)
+{% call badRequest %}
+{{ name }} := {{ name }}64.(int32)
+{% else %}
+{{ name }}, err := strconv.ParseInt({{ name }}String, 10, 64)
+{% call badRequest %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertQueryParameterHelper name either items %}
+{% if items.string %}
+{{ name }} := queryParameters.Get("{% call parameterName either %}")
+{% else %}
+{{ name }}String := queryParameters.Get("{% call parameterName either %}")
+
+{% if items.number %}
+{% call convertNumberItem name items.number %}
+{% elif items.integer %}
+{% call convertIntegerItem name items.integer %}
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertQueryParameter name either %}
+{% if either.a %}
+{% call convertQueryParameterHelper name either either.a.other.items %}
+{% else %}
+{% call convertQueryParameterHelper name either either.b.structure.other.items %}
+{% endif %}
 {% endmacro %}

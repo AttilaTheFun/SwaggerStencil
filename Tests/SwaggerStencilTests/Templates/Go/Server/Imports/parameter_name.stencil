@@ -6,17 +6,22 @@
 {% endif %}
 {% endmacro %}
 
-{% macro extractParameterName parameterOrStructure %}
-{% if parameterOrStructure.a %}
-{% call extractName parameterOrStructure.a %}
+{% macro extractParameterName either %}
+{% if either.a %}
+{% call extractName either.a %}
 {% else %}
-{% call extractName parameterOrStructure.b.structure %}
+{% call extractName either.b.structure %}
 {% endif %}
 {% endmacro %}
 
-{% macro parameterName parameterOrStructure %}
+{% macro parameterName either %}
 {% set name %}
-{% call extractParameterName parameterOrStructure %}
+{% call extractParameterName either %}
 {% endset %}
+{{ name }}
+{% endmacro %}
+
+{% macro parameterNameCamel either %}
+{% set name %}{% call parameterName either %}{% endset %}
 {{ name|toCamel }}
 {% endmacro %}

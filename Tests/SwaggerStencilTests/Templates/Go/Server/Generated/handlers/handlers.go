@@ -6,11 +6,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
-
-	"github.com/attilathefun/registry"
-	"/Users/Logan/swift/SwaggerStencil/Tests/SwaggerStencilTests/Templates/Go/Server/Generated/models"
+	"strconv"
 )
 
 // GetEstimatesTimeHandler - The Time Estimates endpoint returns ETAs for all products offered at a given location, with
@@ -18,12 +15,27 @@ import (
 // most accurate, up-to-date ETAs.
 func GetEstimatesTimeHandler(w http.ResponseWriter, r *http.Request) {
 
-queryParameters := r.URL.Query()
+	queryParameters := r.URL.Query()
 
-QUERY
-QUERY
-QUERY
-QUERY
+	startLatitudeString := queryParameters.Get("start_latitude")
+	startLatitude, err := strconv.ParseFloat(startLatitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	startLongitudeString := queryParameters.Get("start_longitude")
+	startLongitude, err := strconv.ParseFloat(startLongitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	customerUUID := queryParameters.Get("customer_uuid")
+	productID := queryParameters.Get("product_id")
+
 }
 
 // GetProductsHandler - The Products endpoint returns information about the Uber products offered at a given location.
@@ -31,10 +43,24 @@ QUERY
 // display order.
 func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
 
-queryParameters := r.URL.Query()
+	queryParameters := r.URL.Query()
 
-QUERY
-QUERY
+	latitudeString := queryParameters.Get("latitude")
+	latitude, err := strconv.ParseFloat(latitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	longitudeString := queryParameters.Get("longitude")
+	longitude, err := strconv.ParseFloat(longitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 }
 
 // GetEstimatesPriceHandler - The Price Estimates endpoint returns an estimated price range for each product offered at
@@ -45,12 +71,40 @@ QUERY
 // factors in this multiplier.
 func GetEstimatesPriceHandler(w http.ResponseWriter, r *http.Request) {
 
-queryParameters := r.URL.Query()
+	queryParameters := r.URL.Query()
 
-QUERY
-QUERY
-QUERY
-QUERY
+	startLatitudeString := queryParameters.Get("start_latitude")
+	startLatitude, err := strconv.ParseFloat(startLatitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	startLongitudeString := queryParameters.Get("start_longitude")
+	startLongitude, err := strconv.ParseFloat(startLongitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	endLatitudeString := queryParameters.Get("end_latitude")
+	endLatitude, err := strconv.ParseFloat(endLatitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	endLongitudeString := queryParameters.Get("end_longitude")
+	endLongitude, err := strconv.ParseFloat(endLongitudeString, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 }
 
 // GetHistoryHandler - The User Activity endpoint returns data about a user's lifetime activity with Uber. The response
@@ -59,16 +113,28 @@ QUERY
 // limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.
 func GetHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
-queryParameters := r.URL.Query()
+	queryParameters := r.URL.Query()
 
-QUERY
-QUERY
+	offsetString := queryParameters.Get("offset")
+	offset, err := strconv.ParseInt(offsetString, 10, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	limitString := queryParameters.Get("limit")
+	limit, err := strconv.ParseInt(limitString, 10, 64)
+	if err != nil {
+		w.WriteHeader(400)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 }
 
 // GetMeHandler - The User Profile endpoint returns information about the Uber user that has authorized with the
 // application.
 func GetMeHandler(w http.ResponseWriter, r *http.Request) {
 
-
 }
-

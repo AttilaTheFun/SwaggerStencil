@@ -7,7 +7,7 @@
 
 {% macro handlerParameters operation %}
 {% map operation.parameters into components %}
-{% call parameterName maploop.item %} {% call parameterType maploop.item %}
+{% call parameterNameCamel maploop.item %} {% call parameterType maploop.item %}
 {% endmap %}
 {{ components|join:", " }}
 {% endmacro %}

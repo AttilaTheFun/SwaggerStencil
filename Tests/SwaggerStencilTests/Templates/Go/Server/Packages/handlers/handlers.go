@@ -8,6 +8,7 @@ package handlers
 {% import "handler_name.stencil" %}
 {% import "handler_parameters.stencil" %}
 {% import "has_parameter.stencil" %}
+{% import "string_conversion.stencil" %}
 import (
 	"encoding/json"
 	"net/http"
@@ -28,20 +29,21 @@ func {{ handlerName }}Handler(w http.ResponseWriter, r *http.Request) {
 queryParameters := r.URL.Query()
 {% endif %}
 
-{# Extract query parameters: #}
+
 {% for either in operation.parameters %}
+{% set name %}{% call parameterNameCamel either %}{% endset %}
 {% set isQuery %}{% call isQueryParameter either %}{% endset %}
 {% if isQuery %}
-QUERY
-{% else %}
-NOT QUERY
+{% call convertQueryParameter name either %}
 {% endif %}
+
 {% endfor %}
 }
 
 {% endfor %}
 {% endfor %}
 
+{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}
