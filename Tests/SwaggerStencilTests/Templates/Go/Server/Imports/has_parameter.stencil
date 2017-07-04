@@ -3,27 +3,27 @@
     items_string.stencil
 #}
 
-{# Query Parameters #}
+{# Helper Macros #}
 
-{% macro isQueryParameterHelper parameter %}
+{% macro isParameterHelper parameter type %}
 {% set location %}{{ parameter.other.fixedFields.location }}{% endset %}
-{% if location == "query" %}
+{% if location == type %}
 true
 {% endif %}
 {% endmacro %}
 
-{% macro isQueryParameter either %}
+{% macro isParameter either type %}
 {% if either.a %}
-{% call isQueryParameterHelper either.a %}
+{% call isParameterHelper either.a type %}
 {% else %}
-{% call isQueryParameterHelper either.b.structure %}
+{% call isParameterHelper either.b.structure type %}
 {% endif %}
 {% endmacro %}
 
-{% macro hasQueryParameter operation %}
+{% macro hasParameter operation type %}
 {% for either in operation.parameters %}
-{% set isQuery %}{% call isQueryParameter either %}{% endset %}
-{% if isQuery %}
+{% set isType %}{% call isParameter either type %}{% endset %}
+{% if isType %}
 true
 {% endif %}
 {% endfor %}

@@ -36,6 +36,12 @@
       "reason": null,
       "repositoryURL": "https://www.github.com/AttilaTheFun/SwaggerParser.git",
       "version": "0.3.4"
+    },
+    {
+      "package": "Yaml",
+      "reason": null,
+      "repositoryURL": "https://github.com/behrang/YamlSwift.git",
+      "version": "3.4.0"
     }
   ],
   "version": 1

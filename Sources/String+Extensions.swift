@@ -81,7 +81,7 @@ extension String {
         case .snake:
             return self.componentsFromSnake()
         case .kebab:
-            return []
+            return self.componentsFromKebab()
         case .camel:
             return self.componentsFromCamel()
         case .pascal:

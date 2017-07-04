@@ -7,4 +7,5 @@
 {% elif items.number %}float64
 {% elif items.integer %}int64
 {% elif items.boolean %}bool
-{% endif %}{% endmacro %}
+{% endif %}
+{% endmacro %}

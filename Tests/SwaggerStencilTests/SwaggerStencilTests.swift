@@ -1,93 +1,73 @@
 import XCTest
 import SwaggerParser
+import Yaml
 import PathKit
 import Stencil
 import StencilSwiftKit
 @testable import SwaggerStencil
 
 class SwaggerStencilTests: XCTestCase {
-    var generatedFolderPath: String!
-    var templateFolderPath: String!
-    var fixtureFolder: URL!
+    var generatedFolderPath: PathKit.Path!
+    var golangPackagePath: PathKit.Path!
+    var templateFolderPath: PathKit.Path!
 
     override func setUp() {
         let fileURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
-        generatedFolderPath = fileURL.appendingPathComponent("Generated").path
-        templateFolderPath = fileURL.appendingPathComponent("Templates").path
-        fixtureFolder = fileURL.appendingPathComponent("Fixtures")
-    }
+        templateFolderPath = Path(fileURL.path) + "Templates"
 
-//    func testLyft() throws {
-//        // Load context:
-//        let url = URL(fileURLWithPath: "/Users/Logan/Downloads/apidocs-master/merged.json")
-//        let fixture = try String.init(contentsOf: url, encoding: .utf8)
-//        let swagger = try Swagger(JSONString: fixture)
-//        let context: [String : Any] = [
-//            "swagger": swagger,
-//            "path": generatedFolderPath,
-//        ]
-//
-//        // Load environment:
-//        let ext = Extension()
-//        ext.registerStencilSwiftExtensions()
-//        ext.registerCustomFilters()
-//        let paths = [
-//            Path(templateFolderPath + "/Swift/Client")
-//        ]
-//        let loader = FileSystemLoader(paths: paths)
-//        let environment = Environment(loader: loader, extensions: [ext],
-//                                      templateClass: StencilSwiftTemplate.self)
-//
-//        do {
-//            let renderedTemplate = try environment.renderTemplate(name: "Definitions.swift", context: context)
-//            print(renderedTemplate)
-//        } catch {
-//            print(error)
-//        }
-//    }
+        let sourcePath = Path("/Users/Logan/go/src/")
+        golangPackagePath = Path("github.com/attilathefun/test")
+        generatedFolderPath = sourcePath + golangPackagePath
+    }
 
     func testExample() throws {
 
-        let basePath = Path(templateFolderPath + "/Go/Server")
-        let importsPath = basePath + "Imports"
-        let includesPath = basePath + "Includes"
-        let packagesPath = basePath + "Packages"
-        let outputPath = basePath + "Generated"
-
         // Load context:
-        let fixture = try self.fixture(named: "uber.json")
-        let swagger = try Swagger(JSONString: fixture)
+        let swaggerFilePath = generatedFolderPath + "swagger.yaml"
+        let swaggerString = try swaggerFilePath.read(.utf8)
+        let yaml = try Yaml.load(swaggerString)
+        let dictionary = try yaml.toDictionary()
+        let swagger = try Swagger(JSON: dictionary)
         let context: [String : Any] = [
             "swagger": swagger,
-            "path": outputPath,
+            "path": golangPackagePath.string,
         ]
 
-        // Load environment:
+        // Load extension:
         let ext = Extension()
         ext.registerStencilSwiftExtensions()
         ext.registerCustomFilters()
+
+        // Load paths:
+        let basePath = templateFolderPath + "Go/Server"
+        let importsPath = basePath + "Imports"
+        let includesPath = basePath + "Includes"
+        let packagesPath = basePath + "Packages"
         let paths = [
             importsPath,
             includesPath,
             packagesPath
         ]
 
+        // Load environment:
         let loader = FileSystemLoader(paths: paths)
         let environment = Environment(loader: loader, extensions: [ext],
                                       templateClass: Template.self)
 
+        // Generate the code:
         do {
             for packagePath in try packagesPath.children() where packagePath.isDirectory {
                 let packageName = packagePath.lastComponent
-                let generatedPackagePath = outputPath + packageName
+                let generatedPackagePath = generatedFolderPath + packageName
                 try generatedPackagePath.mkpath()
-
-                if packageName != "handlers" {
-                    continue
-                }
 
                 for filePath in try packagePath.children() where filePath.lastComponent.hasSuffix(".go") {
                     let fileName = filePath.lastComponent
+
+//                    if fileName != "service.go" {
+//                        continue
+//                    }
+
                     let generatedFileName = generatedPackagePath + fileName
                     let templateName = String(describing: Path(packageName) + fileName)
 
@@ -100,11 +80,33 @@ class SwaggerStencilTests: XCTestCase {
             print(error)
         }
     }
-}
 
-private extension SwaggerStencilTests {
-    func fixture(named fileName: String) throws -> String {
-        let url = fixtureFolder.appendingPathComponent(fileName)
-        return try String.init(contentsOf: url, encoding: .utf8)
-    }
+    //    func testLyft() throws {
+    //        // Load context:
+    //        let url = URL(fileURLWithPath: "/Users/Logan/Downloads/apidocs-master/merged.json")
+    //        let fixture = try String.init(contentsOf: url, encoding: .utf8)
+    //        let swagger = try Swagger(JSONString: fixture)
+    //        let context: [String : Any] = [
+    //            "swagger": swagger,
+    //            "path": generatedFolderPath,
+    //        ]
+    //
+    //        // Load environment:
+    //        let ext = Extension()
+    //        ext.registerStencilSwiftExtensions()
+    //        ext.registerCustomFilters()
+    //        let paths = [
+    //            Path(templateFolderPath + "/Swift/Client")
+    //        ]
+    //        let loader = FileSystemLoader(paths: paths)
+    //        let environment = Environment(loader: loader, extensions: [ext],
+    //                                      templateClass: StencilSwiftTemplate.self)
+    //
+    //        do {
+    //            let renderedTemplate = try environment.renderTemplate(name: "Definitions.swift", context: context)
+    //            print(renderedTemplate)
+    //        } catch {
+    //            print(error)
+    //        }
+    //    }
 }
