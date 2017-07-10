@@ -73,6 +73,7 @@ class SwaggerStencilTests: XCTestCase {
 
                     let renderedTemplate = try environment.renderTemplate(name: templateName,
                                                                           context: context)
+                    print(renderedTemplate)
                     try generatedFileName.write(renderedTemplate)
                 }
             }

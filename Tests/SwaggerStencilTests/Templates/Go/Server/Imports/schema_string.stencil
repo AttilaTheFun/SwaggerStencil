@@ -1,5 +1,5 @@
 {% macro schemaString schema %}
-{% if schema.structure %}{{ schema.structure.name }}
+{% if schema.structure %}{{ schema.structure.structure.name }}
 {% elif schema.object %}map[string]interface{}
 {% elif schema.array %}
 {% if schema.array.items.one %}[]{% call schemaString schema.array.items.one %}{% endif %}
@@ -10,6 +10,6 @@ UNIMPLEMENTED
 {% elif schema.integer %}int64
 {% elif schema.boolean %}bool
 {% else %}
-UNIMPLEMENTED
+Empty
 {% endif %}
 {% endmacro %}

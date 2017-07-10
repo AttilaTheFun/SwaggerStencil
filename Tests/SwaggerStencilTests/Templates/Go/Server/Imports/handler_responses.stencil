@@ -1,0 +1,37 @@
+{# Requires: 
+    schema_string.stencil,
+    items_string.stencil,
+    parameter_name.stencil,
+    parameter_type.stencil,
+#}
+
+{% macro handlerResponsesHelper operation %}
+
+{% set defaultResponseString %}
+{% if operation.defaultResponse %}
+models.{% call responseType operation.defaultResponse %}
+{% endif %}
+{% endset %}
+
+{% set returnValuesString %}
+{% for code,response in operation.responses %}
+models.{% call responseType response %}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% endset %}
+
+{% if returnValuesString and defaultResponseString %}
+(int, {{ returnValuesString }}, {{ defaultResponseString }})
+{% elif returnValuesString %}
+(int, {{ returnValuesString }})
+{% elif defaultResponseString %}
+(int, {{ defaultResponseString }})
+{% else %}
+int
+{% endif %}
+
+{% endmacro %}
+
+{% macro handlerResponses operation %}
+{% set returnValuesString %}{% call handlerResponsesHelper operation %}{% endset %}
+{{ returnValuesString|removeNewlines }}
+{% endmacro %}

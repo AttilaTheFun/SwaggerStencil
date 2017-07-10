@@ -1,0 +1,15 @@
+{# Requires:
+    schema_string.stencil
+#}
+
+{% macro extractResponseType response %}
+{% call schemaString response.schema %}
+{% endmacro %}
+
+{% macro responseType either %}
+{% if either.a %}
+{% call extractResponseType either.a %}
+{% else %}
+{% call extractResponseType either.b.structure %}
+{% endif %}
+{% endmacro %}

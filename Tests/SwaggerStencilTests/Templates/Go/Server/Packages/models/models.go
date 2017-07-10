@@ -1,6 +1,9 @@
 {% include "header.stencil" %}
 package models
 
+// Empty - Used to indicate an empty response.
+type Empty struct{}
+
 {% import "schema_string.stencil" %}
 {% import "schema_description.stencil" %}
 {% for structure in swagger.definitions %}
