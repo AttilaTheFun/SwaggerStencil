@@ -1,13 +1,8 @@
 {% include "header.stencil" %}
 package handlers
 
-{% import "schema_string.stencil" %}
-{% import "items_string.stencil" %}
-{% import "parameter_name.stencil" %}
-{% import "parameter_type.stencil" %}
 {% import "handler_name.stencil" %}
 {% import "handler_parameters.stencil" %}
-{% import "has_parameter.stencil" %}
 {% import "string_conversion.stencil" %}
 import (
 	"encoding/json"
@@ -30,7 +25,7 @@ func {{ handlerName }}Handler(w http.ResponseWriter, r *http.Request) {
 
 {# Check if function has a query parameter: #}
 
-{% set hasQueryParameter %}{% call hasParameter operation "query" %}{% endset %}
+{% set hasQueryParameter %}{{ operation|hasParameter:"query" }}{% endset %}
 {% if hasQueryParameter %}
 queryParameters := r.URL.Query()
 {% endif %}
@@ -41,11 +36,11 @@ queryParameters := r.URL.Query()
 
 {% for either in operation.parameters %}
 
-{% set name %}{% call parameterNameCamel either %}{% endset %}
-{% set isQuery %}{% call isParameter either "query" %}{% endset %}
-{% set isPath %}{% call isParameter either "path" %}{% endset %}
-{% set isHeader %}{% call isParameter either "path" %}{% endset %}
-{% set isBody %}{% call isParameter either "body" %}{% endset %}
+{% set name %}{{ either|parameterName }}{% endset %}
+{% set isQuery %}{{ either|isParameter:"query" %}{% endset %}
+{% set isPath %}{{ either|isParameter:"path" }}{% endset %}
+{% set isHeader %}{{ either|isParameter:"path" }}{% endset %}
+{% set isBody %}{{ either|isParameter:"body" }}{% endset %}
 
 {% if isBody %}
 BODY
@@ -67,11 +62,6 @@ HEADER
 {% endfor %}
 {% endfor %}
 
-{% endimport %}
-{% endimport %}
-{% endimport %}
-{% endimport %}
-{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}

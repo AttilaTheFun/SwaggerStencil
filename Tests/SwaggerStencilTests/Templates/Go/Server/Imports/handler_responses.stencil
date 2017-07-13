@@ -1,21 +1,14 @@
-{# Requires: 
-    schema_string.stencil,
-    items_string.stencil,
-    parameter_name.stencil,
-    parameter_type.stencil,
-#}
-
 {% macro handlerResponsesHelper operation %}
 
 {% set defaultResponseString %}
 {% if operation.defaultResponse %}
-models.{% call responseType operation.defaultResponse %}
+models.{{ operation.defaultResponse|responseType:"golang" }}
 {% endif %}
 {% endset %}
 
 {% set returnValuesString %}
 {% for code,response in operation.responses %}
-models.{% call responseType response %}{% if not forloop.last %}, {% endif %}
+models.{{ response|responseType:"golang" }}{% if not forloop.last %}, {% endif %}
 {% endfor %}
 {% endset %}
 

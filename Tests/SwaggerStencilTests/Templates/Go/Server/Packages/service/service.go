@@ -1,11 +1,6 @@
 {% include "header.stencil" %}
 package service
 
-{% import "schema_string.stencil" %}
-{% import "items_string.stencil" %}
-{% import "parameter_name.stencil" %}
-{% import "parameter_type.stencil" %}
-{% import "response_type.stencil" %}
 {% import "handler_name.stencil" %}
 {% import "handler_parameters.stencil" %}
 {% import "handler_responses.stencil" %}
@@ -23,11 +18,6 @@ type Service interface {
 {% endfor %}
 }
 
-{% endimport %}
-{% endimport %}
-{% endimport %}
-{% endimport %}
-{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}

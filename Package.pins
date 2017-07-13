@@ -5,7 +5,7 @@
       "package": "ObjectMapper",
       "reason": null,
       "repositoryURL": "https://github.com/Hearst-DD/ObjectMapper.git",
-      "version": "2.2.7"
+      "version": "2.2.8"
     },
     {
       "package": "PathKit",
@@ -35,7 +35,7 @@
       "package": "SwaggerParser",
       "reason": null,
       "repositoryURL": "https://www.github.com/AttilaTheFun/SwaggerParser.git",
-      "version": "0.3.4"
+      "version": "0.4.0"
     },
     {
       "package": "Yaml",

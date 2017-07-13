@@ -4,24 +4,20 @@ package models
 // Empty - Used to indicate an empty response.
 type Empty struct{}
 
-{% import "schema_string.stencil" %}
-{% import "schema_description.stencil" %}
-{% for structure in swagger.definitions %}
-// {{ structure.name|toPascal }} - {% call schemaDescription structure.structure %}
-type {{ structure.name|toPascal }} struct {
+{% for name,schema in swagger.definitions %}
+// {{ name|toPascal }} - {{ schema.metadata.description }}
+type {{ name|toPascal }} struct {
 {% set contents %}
-{% for propertyName,property in structure.structure.object.properties %}
-{% set description %}{% call schemaDescription property %}{% endset %}
+{% for propertyName,propertySchema in schema.type.object.properties %}
 
+{% set description %}{{ propertySchema.metadata.description }}{% endset %}
 {% if description %}{{ description|wrapWidth:120,"// " }}
 
 {% endif %}
-{{ propertyName|toPascal }} {% call schemaString property %}
+{{ propertyName|toPascal }} {{ propertySchema|schemaType:"golang" }}
 {% endfor %}
 {% endset %}
 {{ contents|setIndentation:"    " }}
 }
 
 {% endfor %}
-{% endimport %}
-{% endimport %}
