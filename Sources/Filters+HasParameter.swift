@@ -10,7 +10,8 @@ extension Filters {
             throw TemplateSyntaxError("Expected Operation")
         }
 
-        return operation.parameters.contains { $0.structure.fixedFields.location == location }
+        let hasParameter = operation.parameters.contains { $0.structure.fixedFields.location == location }
+        return hasParameter ? "true" : ""
     }
 
     static func isParameter(value: Any?, arguments: [Any?]) throws -> Any? {
@@ -29,6 +30,7 @@ extension Filters {
             throw TemplateSyntaxError("Invalid Parameter Location")
         }
 
-        return parameter.fixedFields.location == location
+        let isParameter = parameter.fixedFields.location == location
+        return isParameter ? "true" : ""
     }
 }

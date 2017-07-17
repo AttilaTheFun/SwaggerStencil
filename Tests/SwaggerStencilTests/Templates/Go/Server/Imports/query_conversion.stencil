@@ -1,0 +1,66 @@
+{% macro badRequest %}
+if err != nil {
+    w.WriteHeader(400)
+    w.Write([]byte(err.Error()))
+    return
+}
+
+{% endmacro %}
+
+{% macro emptyString parameterNameCamel %}
+if {{ parameterNameCamel }} == "" {
+    w.WriteHeader(400)
+    w.Write([]byte("Invalid parameter: {{ parameterNameCamel }} may not be an empty string."))
+    return
+}
+
+{% endmacro %}
+
+{% macro convertNumberItem parameterNameCamel number %}
+{% if number.format.float %}
+{{ parameterNameCamel }}64, err := strconv.ParseFloat({{ parameterNameCamel }}String, 32)
+{% call badRequest %}
+{{ parameterNameCamel }} := {{ parameterNameCamel }}64.(float32)
+{% else %}
+{{ parameterNameCamel }}, err := strconv.ParseFloat({{ parameterNameCamel }}String, 64)
+{% call badRequest %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertIntegerItem parameterNameCamel integer %}
+{% if integer.format.int32 %}
+{{ parameterNameCamel }}64, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 32)
+{% call badRequest %}
+{{ parameterNameCamel }} := {{ parameterNameCamel }}64.(int32)
+{% else %}
+{{ parameterNameCamel }}, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 64)
+{% call badRequest %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertStringItem parameterNameCamel string %}
+{{ parameterNameCamel }} := queryParameters.Get("{{ parameterName }}")
+{% call emptyString parameterNameCamel %}
+{% endmacro %}
+
+{% macro convertQueryParameterHelper parameterName items %}
+{% set parameterNameCamel %}{{ parameterName|toCamel }}{% endset %}
+{% if items.type.string %}
+{% call convertStringItem parameterNameCamel items.type.string %}
+{% else %}
+{{ parameterNameCamel }}String := queryParameters.Get("{{ parameterName }}")
+{% if items.type.number %}
+{% call convertNumberItem parameterNameCamel items.type.number %}
+{% elif items.type.integer %}
+{% call convertIntegerItem parameterNameCamel items.type.integer %}
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% macro convertQueryParameter parameterName either %}
+{% if either.a %}
+{% call convertQueryParameterHelper parameterName either.a.other.items %}
+{% else %}
+{% call convertQueryParameterHelper parameterName either.b.structure.other.items %}
+{% endif %}
+{% endmacro %}

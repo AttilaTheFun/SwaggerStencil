@@ -13,7 +13,7 @@ extension Filters {
 
         switch language {
         case .golang:
-            return try golangSchemaType(schema: schema) ?? "Empty"
+            return try golangSchemaType(schema: schema) 
         case .swift:
             throw TemplateSyntaxError("Unsupported language")
         }

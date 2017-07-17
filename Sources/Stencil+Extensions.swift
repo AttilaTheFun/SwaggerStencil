@@ -10,6 +10,7 @@ extension Extension {
         self.registerFilter("responseType", filter: Filters.responseType)
         self.registerFilter("hasParameter", filter: Filters.hasParameter)
         self.registerFilter("isParameter", filter: Filters.isParameter)
+        self.registerFilter("handlerName", filter: Filters.handlerName)
 
         self.registerFilter("removeNewlines", filter: Filters.removeNewlines)
         self.registerFilter("pathToPascal", filter: Filters.pathToPascal)

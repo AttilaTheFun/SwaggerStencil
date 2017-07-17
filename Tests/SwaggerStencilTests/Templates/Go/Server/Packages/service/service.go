@@ -1,7 +1,6 @@
 {% include "header.stencil" %}
 package service
 
-{% import "handler_name.stencil" %}
 {% import "handler_parameters.stencil" %}
 {% import "handler_responses.stencil" %}
 import "{{ path }}/models"
@@ -10,7 +9,7 @@ import "{{ path }}/models"
 type Service interface {
 {% for path,pathObject in swagger.paths %}
 {% for operationType,operation in pathObject.operations %}
-{% set handlerName %}{% call handlerName path operationType %}{% endset %}
+{% set handlerName %}{{ path|handlerName:operationType }}{% endset %}
 
     // {{ handlerName }} - {{ operation.summary }}
     {{ handlerName }}({% call handlerParameters operation %}) {% call handlerResponses operation %}
@@ -18,6 +17,5 @@ type Service interface {
 {% endfor %}
 }
 
-{% endimport %}
 {% endimport %}
 {% endimport %}
