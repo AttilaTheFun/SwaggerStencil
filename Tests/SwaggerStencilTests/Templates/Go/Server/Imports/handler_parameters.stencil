@@ -4,3 +4,10 @@
 {% endmap %}
 {{ components|join:", " }}
 {% endmacro %}
+
+{% macro handlerParameterNames operation %}
+{% map operation.parameters into components %}
+{{ maploop.item|parameterName|toCamel }}
+{% endmap %}
+{{ components|join:", " }}
+{% endmacro %}

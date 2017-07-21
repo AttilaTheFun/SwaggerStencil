@@ -1,0 +1,6 @@
+{% macro responseNames operation %}
+{% set responses %}
+{% for code,either in operation.responses %}response{{ code }}{% if not forloop.last %}, {% endif %}{% endfor %}
+{% endset %}
+code{% if operation.responses %}, {% endif %}{{ responses }}{% if operation.defaultResponse %}, defaultResponse{% endif %}
+{% endmacro %}

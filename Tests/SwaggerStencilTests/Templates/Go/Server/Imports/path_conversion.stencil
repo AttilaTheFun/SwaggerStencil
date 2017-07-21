@@ -1,0 +1,14 @@
+{% macro convertPathParameterHelper parameterName items %}
+{% set parameterNameCamel %}{{ parameterName|toCamel }}{% endset %}
+{{ parameterNameCamel }}String := pathParameters["{{ parameterName }}"]
+
+{% call convertItemFromString parameterNameCamel items %}
+{% endmacro %}
+
+{% macro convertPathParameter parameterName either %}
+{% if either.a %}
+{% call convertPathParameterHelper parameterName either.a.other.items %}
+{% else %}
+{% call convertPathParameterHelper parameterName either.b.structure.other.items %}
+{% endif %}
+{% endmacro %}
