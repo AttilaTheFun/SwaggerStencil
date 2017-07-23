@@ -21,7 +21,7 @@ extension Filters {
 
         switch language {
         case .golang:
-            return try response.schema.map { try golangSchemaType(schema: $0) } ?? "Empty"
+            return try response.schema.map { try golangSchemaType(schema: $0) } ?? "models.Empty"
         case .swift:
             throw TemplateSyntaxError("Unsupported language")
         }

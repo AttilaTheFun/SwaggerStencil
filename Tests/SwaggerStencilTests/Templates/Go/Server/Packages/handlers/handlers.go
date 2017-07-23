@@ -3,7 +3,9 @@ package handlers
 
 {% import "handler_parameters.stencil" %}
 {% import "handler_responses.stencil" %}
+{% import "return_error.stencil" %}
 {% import "item_conversion.stencil" %}
+{% import "body_conversion.stencil" %}
 {% import "query_conversion.stencil" %}
 {% import "path_conversion.stencil" %}
 {% import "header_conversion.stencil" %}
@@ -13,6 +15,7 @@ import (
 	"net/http"
 
 	"github.com/attilathefun/registry"
+	"{{ path }}/models"
 	"{{ path }}/service"
 	"github.com/gorilla/mux"
 )
@@ -55,7 +58,7 @@ headerParameters := r.Header
 // Extract {{ parameterName|toCamel }}:
 
 {% if isBody %}
-BODY
+{% call convertBodyParameter parameterName either %}
 {% elif isQuery %}
 {% call convertQueryParameter parameterName either %}
 {% elif isPath %}
@@ -96,6 +99,8 @@ w.Write(bytes)
 
 {% endfor %}
 {% endfor %}
+{% endimport %}
+{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}

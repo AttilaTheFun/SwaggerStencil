@@ -5,7 +5,7 @@ extension Filters {
     static func golangSchemaType(schema: Schema) throws -> String {
         switch schema.type {
         case .structure(let structure):
-            return structure.name
+            return "models." + structure.name
         case .object(let object):
             return try anonymousStruct(properties: object.properties)
         case .array(let array):

@@ -1,0 +1,8 @@
+{% macro returnError %}
+if err != nil {
+    w.WriteHeader(400)
+    w.Write([]byte(err.Error()))
+    return
+}
+
+{% endmacro %}

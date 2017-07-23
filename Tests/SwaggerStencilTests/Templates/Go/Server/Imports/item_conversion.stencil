@@ -1,12 +1,3 @@
-{% macro badRequest %}
-if err != nil {
-    w.WriteHeader(400)
-    w.Write([]byte(err.Error()))
-    return
-}
-
-{% endmacro %}
-
 {% macro emptyString parameterNameCamel %}
 if {{ parameterNameCamel }} == "" {
     w.WriteHeader(400)
@@ -19,23 +10,21 @@ if {{ parameterNameCamel }} == "" {
 {% macro convertNumberItem parameterNameCamel number %}
 {% if number.format.float %}
 {{ parameterNameCamel }}64, err := strconv.ParseFloat({{ parameterNameCamel }}String, 32)
-{% call badRequest %}
 {{ parameterNameCamel }} := {{ parameterNameCamel }}64.(float32)
 {% else %}
 {{ parameterNameCamel }}, err := strconv.ParseFloat({{ parameterNameCamel }}String, 64)
-{% call badRequest %}
 {% endif %}
+{% call returnError %}
 {% endmacro %}
 
 {% macro convertIntegerItem parameterNameCamel integer %}
 {% if integer.format.int32 %}
 {{ parameterNameCamel }}64, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 32)
-{% call badRequest %}
 {{ parameterNameCamel }} := {{ parameterNameCamel }}64.(int32)
 {% else %}
 {{ parameterNameCamel }}, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 64)
-{% call badRequest %}
 {% endif %}
+{% call returnError %}
 {% endmacro %}
 
 {% macro convertStringItem parameterNameCamel string %}

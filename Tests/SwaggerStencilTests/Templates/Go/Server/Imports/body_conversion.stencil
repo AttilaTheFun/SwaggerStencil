@@ -1,0 +1,15 @@
+{% macro convertBodyParameterHelper parameterNameCamel parameter %}decoder := json.NewDecoder(r.Body)
+defer r.Body.Close()
+var {{ parameterNameCamel }} {{ parameter|parameterType:"golang" }}
+err = decoder.Decode(&{{ parameterNameCamel }})
+{% call returnError %}
+{% endmacro %}
+
+{% macro convertBodyParameter parameterName either %}
+{% set parameterNameCamel %}{{ parameterName|toCamel }}{% endset %}
+{% if either.a %}
+{% call convertBodyParameterHelper parameterNameCamel either.a %}
+{% else %}
+{% call convertBodyParameterHelper parameterNameCamel either.b.structure %}
+{% endif %}
+{% endmacro %}
