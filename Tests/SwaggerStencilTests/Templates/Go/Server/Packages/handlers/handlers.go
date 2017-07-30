@@ -31,8 +31,7 @@ func {{ handlerName }}(w http.ResponseWriter, r *http.Request) {
 {% set hasPathParameter %}{{ operation|hasParameter:"path" }}{% endset %}
 {% set hasHeaderParameter %}{{ operation|hasParameter:"header" }}{% endset %}
 var err error
-maybeService, err := registry.Resolve((*service.Service)(nil))
-service := maybeService.(service.Service)
+service := registry.Resolve((*service.Service)(nil)).(service.Service)
 
 {% if hasQueryParameter %}
 // Has query parameter(s):

@@ -64,7 +64,7 @@ class SwaggerStencilTests: XCTestCase {
                 for filePath in try packagePath.children() where filePath.lastComponent.hasSuffix(".go") {
                     let fileName = filePath.lastComponent
 
-//                    if fileName != "handlers.go" {
+//                    if fileName != "main.go" {
 //                        continue
 //                    }
 
