@@ -1,9 +1,0 @@
-{% macro schemaDescription schema %}
-{% if schema.structure %}{{ schema.structure.structure.object.metadata.description }}
-{% elif schema.object %}{{ schema.object.metadata.description }}
-{% elif schema.array %}{{ schema.array.metadata.description }}
-{% elif schema.string %}{{ schema.string.metadata.description }}
-{% elif schema.number %}{{ schema.number.metadata.description }}
-{% elif schema.integer %}{{ schema.integer.metadata.description }}
-{% elif schema.boolean %}{{ schema.boolean.metadata.description }}
-{% endif %}{% endmacro %}
