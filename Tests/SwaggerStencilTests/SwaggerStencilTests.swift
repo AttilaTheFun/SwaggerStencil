@@ -27,7 +27,9 @@ class SwaggerStencilTests: XCTestCase {
         let swaggerString = try swaggerFilePath.read(.utf8)
         let yaml = try Yaml.load(swaggerString)
         let dictionary = try yaml.toDictionary()
-        let swagger = try Swagger(JSON: dictionary)
+        let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [])
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        let swagger = try Swagger(from: jsonString)
         let context: [String : Any] = [
             "swagger": swagger,
             "path": golangPackagePath.string,
