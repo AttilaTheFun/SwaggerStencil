@@ -37,7 +37,7 @@ extension Filters {
             return "bool"
         case .any:
             return "interface{}"
-        case .allOf, .file, .enumeration:
+        case .allOf, .file, .enumeration, .null:
             throw TemplateSyntaxError("Unsupported schema type")
         }
     }

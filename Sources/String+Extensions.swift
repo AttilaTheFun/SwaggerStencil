@@ -18,7 +18,7 @@ extension String {
 extension String {
 
     public var stripTemplate: String {
-        return self[index(after: startIndex) ..< index(before: endIndex)]
+        return String(self[index(after: startIndex) ..< index(before: endIndex)])
     }
 
     private var isTemplate: Bool {

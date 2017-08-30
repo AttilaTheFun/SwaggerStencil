@@ -28,7 +28,7 @@ class ImportNode : NodeType {
         self.nodes = nodes
     }
 
-    func render(_ context: Context) throws -> String {
+    func render(_ context: Stencil.Context) throws -> String {
         guard let templateName = try self.templateName.resolve(context) as? String else {
             throw TemplateSyntaxError("'\(self.templateName)' could not be resolved as a string")
         }
