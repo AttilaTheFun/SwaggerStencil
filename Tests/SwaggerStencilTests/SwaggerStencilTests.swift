@@ -16,7 +16,7 @@ class SwaggerStencilTests: XCTestCase {
         templateFolderPath = Path(fileURL.path) + "Templates"
 
         let sourcePath = Path("/Users/Logan/go/src/")
-        golangPackagePath = Path("github.com/attilathefun/test")
+        golangPackagePath = Path("github.com/attilathefun/messages")
         generatedFolderPath = sourcePath + golangPackagePath
     }
 
@@ -66,9 +66,9 @@ class SwaggerStencilTests: XCTestCase {
                 for filePath in try packagePath.children() where filePath.lastComponent.hasSuffix(".go") {
                     let fileName = filePath.lastComponent
 
-//                    if fileName != "main.go" {
-//                        continue
-//                    }
+                    if fileName != "client.go" {
+                        continue
+                    }
 
                     let generatedFileName = generatedPackagePath + fileName
                     let templateName = String(describing: Path(packageName) + fileName)

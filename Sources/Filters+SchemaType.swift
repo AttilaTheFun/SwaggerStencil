@@ -3,8 +3,16 @@ import Stencil
 
 extension Filters {
     static func schemaType(value: Any?, arguments: [Any?]) throws -> Any? {
-        guard let schema = value as? Schema,
-            let languageStringOptional = arguments.first,
+        let schema: Schema
+        if let either = value as? Either<Schema, Structure<Schema>> {
+            schema = either.structure
+        } else if let valueSchema = value as? Schema {
+            schema = valueSchema
+        } else {
+            throw TemplateSyntaxError("Expected Schema")
+        }
+
+        guard let languageStringOptional = arguments.first,
             let languageString = languageStringOptional as? String,
             let language = Language(rawValue: languageString) else
         {

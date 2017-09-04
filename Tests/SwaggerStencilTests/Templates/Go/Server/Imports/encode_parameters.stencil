@@ -1,0 +1,51 @@
+{# Requires "item_encoding.stencil" #}
+
+{% macro encodeQueryParameter parameterName otherParameter %}
+{% call encodeItemsToString parameterName otherParameter.items %}
+    q.Set("{{ parameterName}}", {{ parameterName|toCamel }}String)
+{% endmacro %}
+
+{% macro encodePathParameter parameterName otherParameter %}
+// NOT IMPLEMENTED
+{% endmacro %}
+
+{% macro encodeHeaderParameter parameterName otherParameter %}
+// NOT IMPLEMENTED
+{% endmacro %}
+
+{# NOTE: There can be at mose one body parameter. #}
+{% macro encodeBodyParameter operation parameterName bodyParameter %}
+    bodyBytes, err := json.Marshal(&{{ parameterName|toCamel }})
+{% call encodeError operation %}
+{% endmacro %}
+
+{% macro encodeParameterHelper operation parameterName parameter %}
+{% set isQuery %}{{ either|isParameter:"query" }}{% endset %}
+{% set isPath %}{{ either|isParameter:"path" }}{% endset %}
+{% set isHeader %}{{ either|isParameter:"header" }}{% endset %}
+{% set isBody %}{{ either|isParameter:"body" }}{% endset %}
+{% if isQuery %}
+{% call encodeQueryParameter parameterName parameter.other %}
+{% elif isPath %}
+{% call encodePathParameter parameterName parameter.other %}
+{% elif isHeader %}
+{% call encodeHeaderParameter parameterName parameter.other %}
+{% elif isBody %}
+{% call encodeBodyParameter operation parameterName parameter.body %}
+{% endif %}
+{% endmacro %}
+
+{% macro encodeParameter operation either %}
+{% set parameterName %}{{ either|parameterName }}{% endset %}
+{% if either.a %}
+{% call encodeParameterHelper operation parameterName either.a %}
+{% elif either.b %}
+{% call encodeParameterHelper operation parameterName either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro encodeParameters operation %}
+{% for either in operation.parameters %}
+{% call encodeParameter operation either %}
+{% endfor %}
+{% endmacro %}

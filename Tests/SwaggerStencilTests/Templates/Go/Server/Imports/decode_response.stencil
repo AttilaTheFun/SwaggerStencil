@@ -1,0 +1,48 @@
+{% macro setupResponse responseName response %}
+{% set hasSchema %}{{ response|hasSchema }}{% endset %}
+{% if hasSchema %}
+{% set typeName %}
+{% if response.a %}
+{{ response.a.schema|schemaType:"golang" }}
+{% else %}
+{{ response.b.structure.schema|schemaType:"golang" }}
+{% endif %}
+{% endset %}
+	{{ responseName }} := {{ typeName }}{}
+{% else %}
+	{{ responseName }} := models.Empty{}
+{% endif %}
+{% endmacro %}
+
+{% macro setupDefaultResponse operation %}
+{% if operation.defaultResponse %}
+{% set responseName %}defaultResponse{% endset %}
+{% call setupResponse responseName operation.defaultResponse %}
+{% endif %}
+{% endmacro %}
+
+{% macro setupResponses operation %}
+{% for code,response in operation.responses %}
+{% set responseName %}response{{ code }}{% endset %}
+{% call setupResponse responseName response %}
+{% endfor %}
+{% endmacro %}
+
+{% macro decodeResponse operation %}
+    // Decode the response:
+    decoder := json.NewDecoder(response.Body)
+    switch response.StatusCode {
+{% for code,response in operation.responses %}
+    case {{ code }}:
+        err = decoder.Decode(&response{{ code }})
+{% endfor %}
+    default:
+{% if operation.defaultResponse %}
+        err = decoder.Decode(&defaultResponse)
+{% else %}
+        break
+{% endif %}
+    }
+
+{% call encodeError operation %}
+{% endmacro %}
