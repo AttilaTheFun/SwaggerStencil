@@ -13,7 +13,7 @@
 // NOT IMPLEMENTED
 {% endmacro %}
 
-{# NOTE: There can be at mose one body parameter. #}
+{# NOTE: There can be at most one body parameter. #}
 {% macro encodeBodyParameter operation parameterName bodyParameter %}
     bodyBytes, err := json.Marshal(&{{ parameterName|toCamel }})
 {% call encodeError operation %}

@@ -8,9 +8,9 @@
 {{ response.b.structure.schema|schemaType:"golang" }}
 {% endif %}
 {% endset %}
-	{{ responseName }} := {{ typeName }}{}
+    {{ responseName }} := {{ typeName }}{}
 {% else %}
-	{{ responseName }} := models.Empty{}
+    {{ responseName }} := models.Empty{}
 {% endif %}
 {% endmacro %}
 
@@ -28,13 +28,38 @@
 {% endfor %}
 {% endmacro %}
 
+{% macro decodeResponseHelper3 variableName schema %}
+{% if schema.type.string %}
+        variableName = string(response.Body)
+{% elif schema.type.structure %}
+        err = decoder.Decode(&{{ variableName }})
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper2 variableName response %}
+{% if response.schema.some %}
+{% call decodeResponseHelper3 variableName response.schema %}
+{% else %}
+        break
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper variableName either %}
+{% if either.a %}
+{% call decodeResponseHelper2 variableName either.a %}
+{% else %}
+{% call decodeResponseHelper2 variableName either.b.structure %}
+{% endif %}
+{% endmacro %}
+
 {% macro decodeResponse operation %}
     // Decode the response:
     decoder := json.NewDecoder(response.Body)
     switch response.StatusCode {
 {% for code,response in operation.responses %}
+{% set variableName %}response{{ code }}{% endset %}
     case {{ code }}:
-        err = decoder.Decode(&response{{ code }})
+{% call decodeResponseHelper variableName response %}
 {% endfor %}
     default:
 {% if operation.defaultResponse %}

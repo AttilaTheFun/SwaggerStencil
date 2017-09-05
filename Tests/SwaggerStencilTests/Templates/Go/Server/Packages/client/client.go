@@ -7,14 +7,17 @@ package client
 {% import "encode_parameters.stencil" %}
 {% import "encode_error.stencil" %}
 {% import "decode_response.stencil" %}
+{% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
-	"bytes" // TODO: Only include this if one of the methods has a body param
-	"encoding/json" // TODO: Only include this if one of the methods has a body param
-	"net/http"
-	"net/url"
-	"time"
+{% if existsBodyParameter %}
+    "bytes"
+{% endif %}
+    "encoding/json"
+    "net/http"
+    "net/url"
+    "time"
 
-	"{{ path }}/models"
+    "{{ path }}/models"
 )
 
 // Client - Implements the the interface for this webservice by proxying to a remote instance of the service.
@@ -29,48 +32,48 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 {% set hasPathParameter %}{{ operation|hasParameter:"path" }}{% endset %}
 {% set hasHeaderParameter %}{{ operation|hasParameter:"header" }}{% endset %}
 {% set hasBodyParameter %}{{ operation|hasParameter:"body" }}{% endset %}
-	var err error
+    var err error
 {% call setupResponses operation %}
 {% call setupDefaultResponse operation %}
 {% if hasPathParameter %}
-	pathParameters := mux.Vars(r)
+    pathParameters := mux.Vars(r)
 {% endif %}
 {% if hasHeaderParameter %}
-	headerParameters := r.Header
+    headerParameters := r.Header
 {% endif %}
 
-	// Build the URL:
-	u, err := url.Parse("http://envoy:8080{{ path }}")
+    // Build the URL:
+    u, err := url.Parse("http://envoy:8080{{ path }}")
 {% call encodeError operation %}
 
 {% if hasQueryParameter %}
-	q := u.Query()
+    q := u.Query()
 {% endif %}
 
 {% call encodeParameters operation %}
 
 {% if hasQueryParameter %}
-	u.RawQuery = q.Encode()
+    u.RawQuery = q.Encode()
 {% endif %}
 
-	// Build the request:
-	var buffer *bytes.Buffer
+    // Build the request:
+    var buffer *bytes.Buffer
 {% if hasBodyParameter %}
-	buffer = bytes.NewBuffer(bodyBytes)
+    buffer = bytes.NewBuffer(bodyBytes)
 {% endif %}
-	request, err := http.NewRequest("{{ operationType|uppercase }}", u.String(), buffer)
+    request, err := http.NewRequest("{{ operationType|uppercase }}", u.String(), buffer)
 {% call encodeError operation %}
 
-	// Make the request:
-	client := &http.Client{Timeout: time.Second * 10}
-	response, err := client.Do(request)
+    // Make the request:
+    client := &http.Client{Timeout: time.Second * 10}
+    response, err := client.Do(request)
 {% call encodeError operation %}
 
-	defer response.Body.Close()
+    defer response.Body.Close()
 
 {% call decodeResponse operation %}
 
-	{% call returnString "response.StatusCode" operation %}
+    {% call returnString "response.StatusCode" operation %}
 }
 
 {% endfor %}

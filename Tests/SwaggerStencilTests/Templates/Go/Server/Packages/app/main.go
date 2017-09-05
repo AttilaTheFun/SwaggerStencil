@@ -2,12 +2,12 @@
 package main
 
 import (
-	"log"
-	"net/http"
+    "log"
+    "net/http"
 
-	"github.com/gorilla/mux"
-	"{{ path }}/bindings"
-	"{{ path }}/handlers"
+    "github.com/gorilla/mux"
+    "{{ path }}/bindings"
+    "{{ path }}/handlers"
 )
 
 func main() {

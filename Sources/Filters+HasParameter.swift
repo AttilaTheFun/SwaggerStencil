@@ -3,14 +3,37 @@ import Stencil
 
 extension Filters {
     static func hasParameter(value: Any?, arguments: [Any?]) throws -> Any? {
-        guard let operation = value as? Operation,
-            let locationString = (arguments.first ?? nil) as? String,
+        guard let locationString = (arguments.first ?? nil) as? String,
             let location = ParameterLocation(rawValue: locationString) else
         {
-            throw TemplateSyntaxError("Expected Operation")
+            throw TemplateSyntaxError("Expected ParameterLocation as argument")
         }
 
+        if let operation = value as? Operation {
+            return self.operation(operation, hasParameterIn: location)
+        } else if let swagger = value as? Swagger {
+            return self.swagger(swagger, hasParameterIn: location)
+        }
+
+        throw TemplateSyntaxError("Expected either Operation or Swagger as value")
+    }
+
+    private static func operation(_ operation: Operation,
+                                  hasParameterIn location: ParameterLocation) -> String
+    {
         let hasParameter = operation.parameters.contains { $0.structure.fixedFields.location == location }
+        return hasParameter ? "true" : ""
+    }
+
+    private static func swagger(_ swagger: Swagger,
+                                  hasParameterIn location: ParameterLocation) -> String
+    {
+        let hasParameter = swagger.paths.values.contains { path in
+            return path.operations.values.contains { operation in
+                return operation.parameters.contains { $0.structure.fixedFields.location == location }
+            }
+        }
+
         return hasParameter ? "true" : ""
     }
 

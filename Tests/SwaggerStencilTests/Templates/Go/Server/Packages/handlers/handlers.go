@@ -10,14 +10,17 @@ package handlers
 {% import "path_conversion.stencil" %}
 {% import "header_conversion.stencil" %}
 {% import "response_names.stencil" %}
+{% set existsPathParameter %}{{ swagger|hasParameter:"path" }}{% endset %}
 import (
-	"encoding/json"
-	"net/http"
+    "encoding/json"
+    "net/http"
 
-	"github.com/attilathefun/registry"
-	"{{ path }}/models"
-	"{{ path }}/service"
-	"github.com/gorilla/mux"
+{% if existsPathParameter %}
+    "github.com/gorilla/mux"
+{% endif %}
+    "github.com/attilathefun/registry"
+    "{{ path }}/models"
+    "{{ path }}/service"
 )
 
 {% for path,pathObject in swagger.paths %}
