@@ -5,9 +5,9 @@ import (
     "log"
     "net/http"
 
-    "github.com/gorilla/mux"
     "{{ path }}/bindings"
     "{{ path }}/handlers"
+    "github.com/gorilla/mux"
 )
 
 func main() {

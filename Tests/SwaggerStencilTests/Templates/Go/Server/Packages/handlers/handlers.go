@@ -15,12 +15,12 @@ import (
     "encoding/json"
     "net/http"
 
+    "{{ path }}/models"
+    "{{ path }}/service"
+    "github.com/attilathefun/registry"
 {% if existsPathParameter %}
     "github.com/gorilla/mux"
 {% endif %}
-    "github.com/attilathefun/registry"
-    "{{ path }}/models"
-    "{{ path }}/service"
 )
 
 {% for path,pathObject in swagger.paths %}
