@@ -2,15 +2,16 @@
 
 {% macro encodeQueryParameter parameterName otherParameter %}
 {% call encodeItemsToString parameterName otherParameter.items %}
-    q.Set("{{ parameterName}}", {{ parameterName|toCamel }}String)
+    queryParameters.Set("{{ parameterName}}", {{ parameterName|toCamel }}String)
 {% endmacro %}
 
 {% macro encodePathParameter parameterName otherParameter %}
-// NOT IMPLEMENTED
+{% call encodeItemsToString parameterName otherParameter.items %}
 {% endmacro %}
 
 {% macro encodeHeaderParameter parameterName otherParameter %}
-// NOT IMPLEMENTED
+{% call encodeItemsToString parameterName otherParameter.items %}
+    headerParameters.Set("{{ parameterName}}", {{ parameterName|toCamel }}String)
 {% endmacro %}
 
 {# NOTE: There can be at most one body parameter. #}

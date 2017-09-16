@@ -5,17 +5,16 @@ package client
 {% import "handler_responses.stencil" %}
 {% import "item_encoding.stencil" %}
 {% import "encode_parameters.stencil" %}
+{% import "encode_path_parameters.stencil" %}
 {% import "encode_error.stencil" %}
 {% import "decode_response.stencil" %}
-{% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
-{% if existsBodyParameter %}
     "bytes"
-{% endif %}
     "encoding/json"
     "net/http"
     "net/url"
     "time"
+    "strings"
 
     "{{ path }}/models"
 )
@@ -33,28 +32,29 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 {% set hasHeaderParameter %}{{ operation|hasParameter:"header" }}{% endset %}
 {% set hasBodyParameter %}{{ operation|hasParameter:"body" }}{% endset %}
     var err error
+    path := "{{ path }}"
 {% call setupResponses operation %}
 {% call setupDefaultResponse operation %}
-{% if hasPathParameter %}
-    pathParameters := mux.Vars(r)
-{% endif %}
 {% if hasHeaderParameter %}
-    headerParameters := r.Header
+    headerParameters := http.Header{}
 {% endif %}
-
-    // Build the URL:
-    u, err := url.Parse("http://envoy:8080{{ path }}")
-{% call encodeError operation %}
-
 {% if hasQueryParameter %}
-    q := u.Query()
+    queryParameters := url.Values{}
 {% endif %}
 
 {% call encodeParameters operation %}
 
-{% if hasQueryParameter %}
-    u.RawQuery = q.Encode()
+{% if hasPathParameter %}
+    replacer := strings.NewReplacer({% call encodePathParameters operation %})
+    path = replacer.Replace(path)
 {% endif %}
+
+    // Build the URL:
+    u, err := url.Parse("http://envoy:8080" + path)
+{% if hasQueryParameter %}
+    u.RawQuery = queryParameters.Encode()
+{% endif %}
+{% call encodeError operation %}
 
     // Build the request:
     var buffer *bytes.Buffer
@@ -63,6 +63,11 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 {% endif %}
     request, err := http.NewRequest("{{ operationType|uppercase }}", u.String(), buffer)
 {% call encodeError operation %}
+
+{% if hasHeaderParameter %}
+    // Add the headers:
+    request.Header = headerParameters
+{% endif %}
 
     // Make the request:
     client := &http.Client{Timeout: time.Second * 10}
@@ -78,6 +83,7 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 
 {% endfor %}
 {% endfor %}
+{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}

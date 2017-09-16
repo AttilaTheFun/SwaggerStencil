@@ -25,6 +25,6 @@
 {% elif items.type.boolean %}
     {{ parameterNameCamel }}String := strconv.FormatBool({{ parameterNameCamel }})
 {% elif items.type.array %}
-// NOT IMPLEMENTED
+// NOT IMPLEMENTED ARRAY
 {% endif %}
 {% endmacro %}

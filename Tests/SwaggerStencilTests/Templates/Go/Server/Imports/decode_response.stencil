@@ -1,14 +1,13 @@
 {% macro setupResponse responseName response %}
 {% set hasSchema %}{{ response|hasSchema }}{% endset %}
 {% if hasSchema %}
-{% set typeName %}
-{% if response.a %}
-{{ response.a.schema|schemaType:"golang" }}
+{% set isPrimitive %}{{ response|responseIsPrimitive }}{% endset %}
+{% set typeName %}{{ response|responseSchemaType:"golang" }}{% endset %}
+{% if isPrimitive %}
+    var {{ responseName }} {{ typeName }}
 {% else %}
-{{ response.b.structure.schema|schemaType:"golang" }}
-{% endif %}
-{% endset %}
     {{ responseName }} := {{ typeName }}{}
+{% endif %}
 {% else %}
     {{ responseName }} := models.Empty{}
 {% endif %}
@@ -30,7 +29,9 @@
 
 {% macro decodeResponseHelper3 variableName schema %}
 {% if schema.type.string %}
-        variableName = string(response.Body)
+        var buf bytes.Buffer
+        buf.ReadFrom(response.Body)
+        {{ variableName }} = buf.String()
 {% elif schema.type.structure %}
         err = decoder.Decode(&{{ variableName }})
 {% endif %}

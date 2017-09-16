@@ -6,9 +6,24 @@ enum Filters {
         case invalidInputType
     }
 
+    static func wrapInCurlyBraces(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return "{\(string)}"
+    }
+
     static func removeNewlines(_ value: Any?) throws -> Any? {
         guard let string = value as? String else { throw Filters.Error.invalidInputType }
         return string.components(separatedBy: "\n").joined()
+    }
+
+    static func trimWhitespace(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.trimmingCharacters(in: .whitespaces)
+    }
+
+    static func trimTrailingComma(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.hasSuffix(",") ? String(string.dropLast()) : string
     }
 
     static func pathToPascal(_ value: Any?) throws -> Any? {

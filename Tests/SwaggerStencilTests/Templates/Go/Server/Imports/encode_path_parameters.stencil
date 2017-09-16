@@ -1,0 +1,11 @@
+{% macro encodePathParameters operation %}
+{% set text %}
+{% for either in operation.parameters %}
+{% set isPathParameter %}{{ either|isParameter:"path" }}{% endset %}
+{% if isPathParameter %}
+"{{ either|parameterName|wrapInCurlyBraces }}", {{ either|parameterName|toCamel }}String, 
+{% endif %}
+{% endfor %}
+{% endset %}
+{{ text|removeNewlines|trimWhitespace|trimTrailingComma }}
+{% endmacro %}

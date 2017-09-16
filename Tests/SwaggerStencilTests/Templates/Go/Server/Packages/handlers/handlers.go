@@ -11,11 +11,14 @@ package handlers
 {% import "header_conversion.stencil" %}
 {% import "response_names.stencil" %}
 {% set existsPathParameter %}{{ swagger|hasParameter:"path" }}{% endset %}
+{% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
     "encoding/json"
     "net/http"
 
+{% if existsBodyParameter %}
     "{{ path }}/models"
+{% endif %}
     "{{ path }}/service"
     "github.com/attilathefun/registry"
 {% if existsPathParameter %}
@@ -26,8 +29,7 @@ import (
 {% for path,pathObject in swagger.paths %}
 {% for operationType,operation in pathObject.operations %}
 {% set handlerName %}{{ path|handlerName:operationType }}{% endset %}
-{% set comment %}{{ handlerName }} - {{ operation.description }}{% endset %}
-{{ comment|wrapWidth:120,"// " }}
+// {{ handlerName }} - {{ operation.summary }}
 func {{ handlerName }}(w http.ResponseWriter, r *http.Request) {
 {% set contents %}
 {% set hasQueryParameter %}{{ operation|hasParameter:"query" }}{% endset %}
