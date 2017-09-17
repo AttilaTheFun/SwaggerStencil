@@ -8,13 +8,19 @@ package client
 {% import "encode_path_parameters.stencil" %}
 {% import "encode_error.stencil" %}
 {% import "decode_response.stencil" %}
+{% set existsPathParameter %}{{ swagger|hasParameter:"path" }}{% endset %}
+{% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
+{% if existsBodyParameter %}
     "bytes"
+{% endif %}
     "encoding/json"
     "net/http"
     "net/url"
-    "time"
+{% if existsPathParameter %}
     "strings"
+{% endif %}
+    "time"
 
     "{{ path }}/models"
 )
@@ -57,11 +63,10 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 {% call encodeError operation %}
 
     // Build the request:
-    var buffer *bytes.Buffer
 {% if hasBodyParameter %}
-    buffer = bytes.NewBuffer(bodyBytes)
+    buffer := bytes.NewBuffer(bodyBytes)
 {% endif %}
-    request, err := http.NewRequest("{{ operationType|uppercase }}", u.String(), buffer)
+    request, err := http.NewRequest("{{ operationType|uppercase }}", u.String(), {% if hasBodyParameter %}buffer{% else %}nil{% endif %})
 {% call encodeError operation %}
 
 {% if hasHeaderParameter %}

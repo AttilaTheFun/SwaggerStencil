@@ -10,6 +10,7 @@ package handlers
 {% import "path_conversion.stencil" %}
 {% import "header_conversion.stencil" %}
 {% import "response_names.stencil" %}
+{% import "encode_response.stencil" %}
 {% set existsPathParameter %}{{ swagger|hasParameter:"path" }}{% endset %}
 {% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
@@ -74,35 +75,20 @@ headerParameters := r.Header
 // Call the function with the parsed parameters:
 {% call responseNames operation %} := service.{{ handlerName }}({% call handlerParameterNames operation %})
 
-// Marshal the response:
-var bytes []byte
-switch code {
-{% for code,either in operation.responses %}
-case {{ code }}:
-    bytes, err = json.Marshal(response{{ code }})
-{% endfor %}
-{% if operation.defaultResponse %}
-default:
-    bytes, err = json.Marshal(defaultResponse)
-{% endif %}
-}
-
-// Check if the marshaling was successful:
-if err != nil {
-    w.WriteHeader(500)
-    w.Write([]byte(err.Error()))
-    return
-}
+{% call encodeResponse operation %}
 
 // Write the status code and the marshaled bytes:
 w.WriteHeader(code)
-w.Write(bytes)
+if bytes != nil {
+    w.Write(bytes)
+}
 {% endset %}
 {{ contents|setIndentation:"    " }}
 }
 
 {% endfor %}
 {% endfor %}
+{% endimport %}
 {% endimport %}
 {% endimport %}
 {% endimport %}

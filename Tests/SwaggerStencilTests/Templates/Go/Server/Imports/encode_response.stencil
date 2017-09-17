@@ -1,0 +1,47 @@
+{% macro encodeResponseHelper3 responseName schema %}
+{% if schema.type.string %}
+    bytes = []byte({{ responseName }})
+{% elif schema.type.structure %}
+    bytes, err = json.Marshal({{ responseName }})
+{% else %}
+    // NOT IMPLEMENTED
+{% endif %}
+{% endmacro %}
+
+{% macro encodeResponseHelper2 responseName response %}
+{% if response.schema.some %}
+{% call encodeResponseHelper3 responseName response.schema %}
+{% else %}
+    break
+{% endif %}
+{% endmacro %}
+
+{% macro encodeResponseHelper responseName either %}
+{% if either.a %}
+{% call encodeResponseHelper2 responseName either.a %}
+{% else %}
+{% call encodeResponseHelper2 responseName either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro encodeResponse operation %}
+// Marshal the response:
+var bytes []byte
+switch code {
+{% for code,either in operation.responses %}
+{% set responseName %}response{{ code }}{% endset %}
+case {{ code }}:
+{% call encodeResponseHelper responseName either %}
+{% endfor %}
+{% if operation.defaultResponse %}
+default:
+{% call encodeResponseHelper "defaultResponse" operation.defaultResponse %}
+{% endif %}
+}
+
+if err != nil {
+    w.WriteHeader(500)
+    w.Write([]byte(err.Error()))
+    return
+}
+{% endmacro %}
