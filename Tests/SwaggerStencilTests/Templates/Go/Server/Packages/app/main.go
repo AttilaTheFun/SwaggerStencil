@@ -5,9 +5,12 @@ import (
     "log"
     "net/http"
 
+{% set externalImports %}
     "{{ path }}/bindings"
     "{{ path }}/handlers"
     "github.com/gorilla/mux"
+{% endset %}
+{{ externalImports|alphabetizeLines }}
 )
 
 func main() {

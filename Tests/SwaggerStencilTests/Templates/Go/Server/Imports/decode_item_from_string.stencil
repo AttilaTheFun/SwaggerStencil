@@ -1,0 +1,46 @@
+{% macro decodeNumberItem parameterNameCamel number %}
+{% if number.format.float %}
+    {{ parameterNameCamel }}64, err := strconv.ParseFloat({{ parameterNameCamel }}String, 32)
+    {{ parameterNameCamel }} := {{ parameterNameCamel }}64.(float32)
+{% else %}
+    {{ parameterNameCamel }}, err := strconv.ParseFloat({{ parameterNameCamel }}String, 64)
+{% endif %}
+{% call returnError %}
+{% endmacro %}
+
+{% macro decodeIntegerItem parameterNameCamel integer %}
+{% if integer.format.int32 %}
+    {{ parameterNameCamel }}64, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 32)
+    {{ parameterNameCamel }} := {{ parameterNameCamel }}64.(int32)
+{% else %}
+    {{ parameterNameCamel }}, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 64)
+{% endif %}
+{% call returnError %}
+{% endmacro %}
+
+{% macro decodeStringItem parameterNameCamel string %}
+    {{ parameterNameCamel }} := {{ parameterNameCamel }}String
+    if {{ parameterNameCamel }} == "" {
+        w.WriteHeader(400)
+        w.Write([]byte("Invalid parameter: {{ parameterNameCamel }} may not be an empty string."))
+        return
+    }
+{% endmacro %}
+
+{% macro decodeArrayItem parameterNameCamel array %}
+{% if array.items.type.string %}
+    {{ parameterNameCamel }} := strings.Split({{ parameterNameCamel }}String, ",")
+{% endif %}
+{% endmacro %}
+
+{% macro decodeItemFromString parameterNameCamel items %}
+{% if items.type.string %}
+{% call decodeStringItem parameterNameCamel items.type.string %}
+{% elif items.type.number %}
+{% call decodeNumberItem parameterNameCamel items.type.number %}
+{% elif items.type.integer %}
+{% call decodeIntegerItem parameterNameCamel items.type.integer %}
+{% elif items.type.array %}
+{% call decodeArrayItem parameterNameCamel items.type.array %}
+{% endif %}
+{% endmacro %}

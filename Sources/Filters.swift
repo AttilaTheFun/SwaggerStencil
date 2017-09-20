@@ -11,6 +11,11 @@ enum Filters {
         return "{\(string)}"
     }
 
+    static func alphabetizeLines(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.components(separatedBy: "\n").sorted().joined(separator: "\n")
+    }
+
     static func removeNewlines(_ value: Any?) throws -> Any? {
         guard let string = value as? String else { throw Filters.Error.invalidInputType }
         return string.components(separatedBy: "\n").joined()

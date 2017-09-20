@@ -6,6 +6,12 @@ extension OperationType: CustomStringConvertible {
     }
 }
 
+extension CollectionFormat: CustomStringConvertible {
+    public var description: String {
+        return self.rawValue
+    }
+}
+
 extension Parameter {
     public var fixedFields: FixedParameterFields {
         switch self {

@@ -1,0 +1,33 @@
+{% macro decodeParameterHelper parameterNameCamel parameterName parameter %}
+    // Extract {{ parameterName|toCamel }}:
+{% set isBody %}{{ parameter|isParameter:"body" }}{% endset %}
+{% if isBody %}
+    decoder := json.NewDecoder(r.Body)
+    defer r.Body.Close()
+    var {{ parameterNameCamel }} {{ parameter|parameterType:"golang" }}
+    err = decoder.Decode(&{{ parameterNameCamel }})
+{% call returnError %}
+{% else %}
+{% set isQuery %}{{ parameter|isParameter:"query" }}{% endset %}
+{% set isPath %}{{ parameter|isParameter:"path" }}{% endset %}
+{% set isHeader %}{{ parameter|isParameter:"header" }}{% endset %}
+{% if isQuery %}
+    {{ parameterNameCamel }}String := queryParameters.Get("{{ parameterName }}")
+{% elif isPath %}
+    {{ parameterNameCamel }}String := pathParameters["{{ parameterName }}"]
+{% elif isHeader %}
+    {{ parameterNameCamel }}String := headerParameters.Get("{{ parameterName }}")
+{% endif %}
+{% call decodeItemFromString parameterNameCamel parameter.other.items %}
+{% endif %}
+{% endmacro %}
+
+{% macro decodeParameter either %}
+{% set parameterName %}{{ either|parameterName }}{% endset %}
+{% set parameterNameCamel %}{{ parameterName|toCamel }}{% endset %}
+{% if either.a %}
+{% call decodeParameterHelper parameterNameCamel parameterName either.a %}
+{% elif either.b %}
+{% call decodeParameterHelper parameterNameCamel parameterName either.b.structure %}
+{% endif %}
+{% endmacro %}

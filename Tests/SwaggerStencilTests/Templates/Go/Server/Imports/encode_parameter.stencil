@@ -1,0 +1,28 @@
+{% macro encodeParameterHelper operation parameterNameCamel parameterName parameter %}
+{% set isBody %}{{ either|isParameter:"body" }}{% endset %}
+{% if isBody %}
+    bodyBytes, err := json.Marshal(&{{ parameterNameCamel }})
+{% call encodeError operation %}
+{% else %}
+{% set isQuery %}{{ either|isParameter:"query" }}{% endset %}
+{% set isPath %}{{ either|isParameter:"path" }}{% endset %}
+{% set isHeader %}{{ either|isParameter:"header" }}{% endset %}
+{% call encodeItemToString parameterNameCamel parameterName parameter.other.items %}
+{% if isQuery %}
+    queryParameters.Set("{{ parameterName}}", {{ parameterNameCamel }}String)
+{% elif isPath %}
+{% elif isHeader %}
+    headerParameters.Set("{{ parameterName}}", {{ parameterNameCamel }}String)
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{% macro encodeParameter operation either %}
+{% set parameterName %}{{ either|parameterName }}{% endset %}
+{% set parameterNameCamel %}{{ parameterName|toCamel }}{% endset %}
+{% if either.a %}
+{% call encodeParameterHelper operation parameterNameCamel parameterName either.a %}
+{% elif either.b %}
+{% call encodeParameterHelper operation parameterNameCamel parameterName either.b.structure %}
+{% endif %}
+{% endmacro %}

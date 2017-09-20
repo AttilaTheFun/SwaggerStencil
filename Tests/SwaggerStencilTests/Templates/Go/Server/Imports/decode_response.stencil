@@ -32,7 +32,7 @@
         var buf bytes.Buffer
         buf.ReadFrom(response.Body)
         {{ variableName }} = buf.String()
-{% elif schema.type.structure %}
+{% elif schema.type.structure or schema.type.array %}
         err = decoder.Decode(&{{ variableName }})
 {% endif %}
 {% endmacro %}

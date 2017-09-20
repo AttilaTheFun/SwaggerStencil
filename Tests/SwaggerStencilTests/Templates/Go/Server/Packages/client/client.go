@@ -3,17 +3,15 @@ package client
 
 {% import "handler_parameters.stencil" %}
 {% import "handler_responses.stencil" %}
-{% import "item_encoding.stencil" %}
-{% import "encode_parameters.stencil" %}
+{% import "encode_item_to_string.stencil" %}
+{% import "encode_parameter.stencil" %}
 {% import "encode_path_parameters.stencil" %}
 {% import "encode_error.stencil" %}
 {% import "decode_response.stencil" %}
 {% set existsPathParameter %}{{ swagger|hasParameter:"path" }}{% endset %}
 {% set existsBodyParameter %}{{ swagger|hasParameter:"body" }}{% endset %}
 import (
-{% if existsBodyParameter %}
     "bytes"
-{% endif %}
     "encoding/json"
     "net/http"
     "net/url"
@@ -48,15 +46,17 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
     queryParameters := url.Values{}
 {% endif %}
 
-{% call encodeParameters operation %}
+{% for either in operation.parameters %}
+{% call encodeParameter operation either %}
 
+{% endfor %}
 {% if hasPathParameter %}
     replacer := strings.NewReplacer({% call encodePathParameters operation %})
     path = replacer.Replace(path)
-{% endif %}
 
+{% endif %}
     // Build the URL:
-    u, err := url.Parse("http://envoy:8080" + path)
+    u, err := url.Parse("http://hermes:8080" + path)
 {% if hasQueryParameter %}
     u.RawQuery = queryParameters.Encode()
 {% endif %}
@@ -72,8 +72,8 @@ func (Client) {{ handlerName }}({% call handlerParameters operation %}) {% call 
 {% if hasHeaderParameter %}
     // Add the headers:
     request.Header = headerParameters
-{% endif %}
 
+{% endif %}
     // Make the request:
     client := &http.Client{Timeout: time.Second * 10}
     response, err := client.Do(request)

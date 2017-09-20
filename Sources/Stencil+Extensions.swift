@@ -21,6 +21,7 @@ extension Extension {
         self.registerFilter("trimWhitespace", filter: Filters.trimWhitespace)
         self.registerFilter("trimTrailingComma", filter: Filters.trimTrailingComma)
         self.registerFilter("removeNewlines", filter: Filters.removeNewlines)
+        self.registerFilter("alphabetizeLines", filter: Filters.alphabetizeLines)
         self.registerFilter("pathToPascal", filter: Filters.pathToPascal)
         self.registerFilter("toPascal", filter: Filters.toPascal)
         self.registerFilter("toCamel", filter: Filters.toCamel)

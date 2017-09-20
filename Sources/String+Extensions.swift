@@ -186,10 +186,6 @@ extension String {
 
 // MARK: Pascal Encoding / Decoding
 
-private let acronyms = Set<String>([
-    "id", "uuid", "url", "sms"
-])
-
 extension String {
 
     fileprivate func componentsFromPascal() -> [String] {
@@ -219,12 +215,16 @@ extension String {
         return components
     }
 
-    private var isAcronym: Bool {
-        return acronyms.contains(self)
-    }
-
     fileprivate func pascalComponent() -> String {
-        return self.lowercased().isAcronym ? self.uppercased() : self.capitalized
+        let lowercased = self.lowercased()
+        let acronyms = ["id", "uuid", "url"]
+        if acronyms.contains(lowercased) {
+            return self.uppercased()
+        } else if self.last == "s" && acronyms.contains(String(self.dropLast())) {
+            return self.dropLast().uppercased() + "s"
+        } else {
+            return self.capitalized
+        }
     }
 
     fileprivate static func pascal(from components: [String]) -> String {

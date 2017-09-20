@@ -1,9 +1,15 @@
 {% macro responseNames operation %}
-{% set responses %}
+{% if operation.responses %}
+{% set responsesString %}
 {% for code,either in operation.responses %}
 {% set hasSchema %}{{ either|hasSchema }}{% endset %}
-{% if hasSchema %}response{{ code }}{% else %}_{% endif %}{% if not forloop.last %}, {% endif %}
+{% if hasSchema %}response{{ code }}{% else %}_{% endif %}
 {% endfor %}
 {% endset %}
-code{% if operation.responses %}, {% endif %}{{ responses|removeNewlines }}{% if operation.defaultResponse %}, defaultResponse{% endif %}
+code, {{ responsesString|removeNewlines|trimTrailingComma }}{% if operation.defaultResponse %}, defaultResponse{% endif %}
+{% elif operation.defaultResponse %}
+code, defaultResponse
+{% else %}
+code
+{% endif %}
 {% endmacro %}

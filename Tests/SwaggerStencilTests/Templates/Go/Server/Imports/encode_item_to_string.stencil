@@ -1,0 +1,35 @@
+{% macro encodeNumberItem parameterNameCamel number %}
+{% if number.format.float %}
+    {{ parameterNameCamel }}String := strconv.FormatFloat(float64({{ parameterNameCamel }}), 'E', -1, 32)
+{% else %}
+    {{ parameterNameCamel }}String := strconv.FormatFloat({{ parameterNameCamel }}, 'E', -1, 64)
+{% endif %}
+{% endmacro %}
+
+{% macro encodeIntegerItem parameterNameCamel integer %}
+{% if integer.format.int32 %}
+    {{ parameterNameCamel }}String := strconv.FormatInt(int64({{ parameterNameCamel }}), 10)
+{% else %}
+    {{ parameterNameCamel }}String := strconv.FormatInt({{ parameterNameCamel }}, 10)
+{% endif %}
+{% endmacro %}
+
+{% macro encodeArrayItem parameterNameCamel array %}
+{% if array.items.type.string %}
+    {{ parameterNameCamel }}String := strings.Join({{ parameterNameCamel }}, ",")
+{% endif %}
+{% endmacro %}
+
+{% macro encodeItemToString parameterNameCamel parameterName items %}
+{% if items.type.string %}
+    {{ parameterNameCamel }}String := {{ parameterNameCamel }}
+{% elif items.type.number %}
+{% call encodeNumberItem parameterNameCamel items.type.number %}
+{% elif items.type.integer %}
+{% call encodeIntegerItem parameterNameCamel items.type.integer %}
+{% elif items.type.boolean %}
+    {{ parameterNameCamel }}String := strconv.FormatBool({{ parameterNameCamel }})
+{% elif items.type.array %}
+{% call encodeArrayItem parameterNameCamel items.type.array %}
+{% endif %}
+{% endmacro %}

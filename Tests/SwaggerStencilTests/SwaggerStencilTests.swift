@@ -16,7 +16,7 @@ class SwaggerStencilTests: XCTestCase {
         templateFolderPath = Path(fileURL.path) + "Templates"
 
         let sourcePath = Path("/Users/Logan/go/src/")
-        golangPackagePath = Path("github.com/attilathefun/sessions")
+        golangPackagePath = Path("github.com/attilathefun/users")
         generatedFolderPath = sourcePath + golangPackagePath
     }
 

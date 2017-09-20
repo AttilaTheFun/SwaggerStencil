@@ -1,4 +1,9 @@
-{% macro returnString code operation %}return {{ code }}, {% for code,response in operation.responses %}response{{ code }}, {% endfor %}defaultResponse{% endmacro %}
+{% macro returnString code operation %}
+{% set contents %}
+return {{ code }}, {% for code,response in operation.responses %}response{{ code }}, {% endfor %}defaultResponse
+{% endset %}
+{{ contents|removeNewlines }}
+{% endmacro %}
 
 {% macro encodeError operation %}
     if err != nil {
