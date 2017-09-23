@@ -3,8 +3,8 @@
         bytes = []byte({{ responseName }})
 {% elif schema.type.structure or schema.type.array %}
         bytes, err = json.Marshal({{ responseName }})
-{% else %}
-        // NOT IMPLEMENTED
+{% elif schema|isType:"boolean" %}
+        bytes = []byte(strconv.FormatBool({{ responseName }}))
 {% endif %}
 {% endmacro %}
 

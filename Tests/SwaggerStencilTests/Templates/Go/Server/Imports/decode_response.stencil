@@ -1,3 +1,84 @@
+{% macro decodeNumberResponse responseName numberSchema %}
+{% if numberSchema.format.float %}
+        {{ responseName }}64, err := strconv.ParseFloat({{ responseName }}String, 32)
+        {{ responseName }} = {{ responseName }}64.(float32)
+{% else %}
+        {{ responseName }}, err = strconv.ParseFloat({{ responseName }}String, 64)
+{% endif %}
+{% call returnError %}
+{% endmacro %}
+
+{% macro decodeIntegerResponse responseName integerSchema %}
+{% if integerSchema.format.int32 %}
+        {{ responseName }}64, err := strconv.ParseInt({{ responseName }}String, 10, 32)
+        {{ responseName }} = {{ responseName }}64.(int32)
+{% else %}
+        {{ responseName }}, err := strconv.ParseInt({{ responseName }}String, 10, 64)
+{% endif %}
+{% call returnError %}
+{% endmacro %}
+
+{% macro decodePrimitive responseName schema %}
+        var buf bytes.Buffer
+        buf.ReadFrom(response.Body)
+        {{ responseName }}String := buf.String()
+{% if schema.type.string %}
+        {{ responseName }} := {{ responseName }}String
+{% elif schema|isType:"boolean" %}
+        {{ responseName }}, err = strconv.ParseBool({{ responseName }}String)
+{% elif schema.type.number %}
+{% call decodeNumberResponse responseName schema.type.number %}
+{% elif schema.type.integer %}
+{% call decodeIntegerResponse responseName schema.type.integer %}
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper3 responseName schema %}
+{% set isPrimitive %}{{ schema|isPrimitive }}{% endset %}
+{% if isPrimitive %}
+{% call decodePrimitive responseName schema %}
+{% elif schema.type.structure or schema.type.array %}
+        err = decoder.Decode(&{{ responseName }})
+{% elif schema.type.structure or schema.type.array %}
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper2 responseName response %}
+{% if response.schema.some %}
+{% call decodeResponseHelper3 responseName response.schema %}
+{% else %}
+        break
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper responseName either %}
+{% if either.a %}
+{% call decodeResponseHelper2 responseName either.a %}
+{% else %}
+{% call decodeResponseHelper2 responseName either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponse operation %}
+    // Decode the response:
+    decoder := json.NewDecoder(response.Body)
+    switch response.StatusCode {
+{% for code,response in operation.responses %}
+{% set responseName %}response{{ code }}{% endset %}
+    case {{ code }}:
+{% call decodeResponseHelper responseName response %}
+{% endfor %}
+    default:
+{% if operation.defaultResponse %}
+        err = decoder.Decode(&defaultResponse)
+{% else %}
+        break
+{% endif %}
+    }
+
+{% call encodeError operation %}
+{% endmacro %}
+
 {% macro setupResponse responseName response %}
 {% set hasSchema %}{{ response|hasSchema }}{% endset %}
 {% if hasSchema %}
@@ -25,50 +106,4 @@
 {% set responseName %}response{{ code }}{% endset %}
 {% call setupResponse responseName response %}
 {% endfor %}
-{% endmacro %}
-
-{% macro decodeResponseHelper3 variableName schema %}
-{% if schema.type.string %}
-        var buf bytes.Buffer
-        buf.ReadFrom(response.Body)
-        {{ variableName }} = buf.String()
-{% elif schema.type.structure or schema.type.array %}
-        err = decoder.Decode(&{{ variableName }})
-{% endif %}
-{% endmacro %}
-
-{% macro decodeResponseHelper2 variableName response %}
-{% if response.schema.some %}
-{% call decodeResponseHelper3 variableName response.schema %}
-{% else %}
-        break
-{% endif %}
-{% endmacro %}
-
-{% macro decodeResponseHelper variableName either %}
-{% if either.a %}
-{% call decodeResponseHelper2 variableName either.a %}
-{% else %}
-{% call decodeResponseHelper2 variableName either.b.structure %}
-{% endif %}
-{% endmacro %}
-
-{% macro decodeResponse operation %}
-    // Decode the response:
-    decoder := json.NewDecoder(response.Body)
-    switch response.StatusCode {
-{% for code,response in operation.responses %}
-{% set variableName %}response{{ code }}{% endset %}
-    case {{ code }}:
-{% call decodeResponseHelper variableName response %}
-{% endfor %}
-    default:
-{% if operation.defaultResponse %}
-        err = decoder.Decode(&defaultResponse)
-{% else %}
-        break
-{% endif %}
-    }
-
-{% call encodeError operation %}
 {% endmacro %}

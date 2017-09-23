@@ -27,7 +27,7 @@
 {% call encodeNumberItem parameterNameCamel items.type.number %}
 {% elif items.type.integer %}
 {% call encodeIntegerItem parameterNameCamel items.type.integer %}
-{% elif items.type.boolean %}
+{% elif items|isType:"boolean" %}
     {{ parameterNameCamel }}String := strconv.FormatBool({{ parameterNameCamel }})
 {% elif items.type.array %}
 {% call encodeArrayItem parameterNameCamel items.type.array %}

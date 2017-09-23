@@ -13,6 +13,7 @@ extension Extension {
 
         self.registerFilter("hasSchema", filter: Filters.hasSchema)
         self.registerFilter("isPrimitive", filter: Filters.isPrimitive)
+        self.registerFilter("isType", filter: Filters.isType)
         self.registerFilter("responseIsPrimitive", filter: Filters.responseIsPrimitive)
         self.registerFilter("schemaType", filter: Filters.schemaType)
         self.registerFilter("responseSchemaType", filter: Filters.responseSchemaType)

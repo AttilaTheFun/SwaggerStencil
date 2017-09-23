@@ -2,7 +2,7 @@ import SwaggerParser
 import Stencil
 
 extension Filters {
-    static func hasSchema(value: Any?, arguments: [Any?]) throws -> Any? {
+    static func hasSchema(value: Any?) throws -> Any? {
         let response: Response
         if let either = value as? Either<Response, Structure<Response>> {
             response = either.structure

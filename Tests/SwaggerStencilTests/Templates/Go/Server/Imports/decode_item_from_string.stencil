@@ -18,28 +18,35 @@
 {% call returnError %}
 {% endmacro %}
 
-{% macro decodeStringItem parameterNameCamel string %}
+{% macro decodeStringItem parameterNameCamel isRequired string %}
     {{ parameterNameCamel }} := {{ parameterNameCamel }}String
+{% if isRequired %}
     if {{ parameterNameCamel }} == "" {
         w.WriteHeader(400)
         w.Write([]byte("Invalid parameter: {{ parameterNameCamel }} may not be an empty string."))
         return
     }
+{% endif %}
 {% endmacro %}
 
 {% macro decodeArrayItem parameterNameCamel array %}
 {% if array.items.type.string %}
-    {{ parameterNameCamel }} := strings.Split({{ parameterNameCamel }}String, ",")
+    var {{ parameterNameCamel }} []string
+    if {{ parameterNameCamel }}String != "" {
+        {{ parameterNameCamel }} = strings.Split({{ parameterNameCamel }}String, ",")
+    }
 {% endif %}
 {% endmacro %}
 
-{% macro decodeItemFromString parameterNameCamel items %}
+{% macro decodeItemFromString parameterNameCamel isRequired items %}
 {% if items.type.string %}
-{% call decodeStringItem parameterNameCamel items.type.string %}
+{% call decodeStringItem parameterNameCamel isRequired items.type.string %}
 {% elif items.type.number %}
 {% call decodeNumberItem parameterNameCamel items.type.number %}
 {% elif items.type.integer %}
 {% call decodeIntegerItem parameterNameCamel items.type.integer %}
+{% elif items|isType:"boolean" %}
+    {{ parameterNameCamel }}, err := strconv.ParseBool({{ parameterNameCamel }}String)
 {% elif items.type.array %}
 {% call decodeArrayItem parameterNameCamel items.type.array %}
 {% endif %}

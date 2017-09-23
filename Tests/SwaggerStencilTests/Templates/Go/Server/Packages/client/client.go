@@ -15,6 +15,7 @@ import (
     "encoding/json"
     "net/http"
     "net/url"
+    "strconv"
 {% if existsPathParameter %}
     "strings"
 {% endif %}

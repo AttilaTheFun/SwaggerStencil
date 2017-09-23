@@ -18,7 +18,7 @@
 {% elif isHeader %}
     {{ parameterNameCamel }}String := headerParameters.Get("{{ parameterName }}")
 {% endif %}
-{% call decodeItemFromString parameterNameCamel parameter.other.items %}
+{% call decodeItemFromString parameterNameCamel parameter.other.fixedFields.required parameter.other.items %}
 {% endif %}
 {% endmacro %}
 

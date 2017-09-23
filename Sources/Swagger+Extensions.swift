@@ -1,5 +1,11 @@
 import SwaggerParser
 
+extension DataType: CustomStringConvertible {
+    public var description: String {
+        return self.rawValue
+    }
+}
+
 extension OperationType: CustomStringConvertible {
     public var description: String {
         return self.rawValue
