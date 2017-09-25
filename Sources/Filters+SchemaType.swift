@@ -23,7 +23,7 @@ extension Filters {
         case .golang:
             return try golangSchemaType(schema: schema) 
         case .swift:
-            throw TemplateSyntaxError("Unsupported language")
+            return try swiftSchemaType(schema: schema)
         }
     }
 }

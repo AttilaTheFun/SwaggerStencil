@@ -28,7 +28,12 @@ extension Filters {
                 return try golangItemsType(items: items)
             }
         case .swift:
-            throw TemplateSyntaxError("Unsupported language")
+            switch parameter {
+            case .body(_, let schema):
+                return try swiftSchemaType(schema: schema)
+            case .other(_, let items):
+                return try swiftItemsType(items: items)
+            }
         }
     }
 }

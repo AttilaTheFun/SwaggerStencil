@@ -28,7 +28,13 @@ enum Filters {
 
     static func trimTrailingComma(_ value: Any?) throws -> Any? {
         guard let string = value as? String else { throw Filters.Error.invalidInputType }
-        return string.hasSuffix(",") ? String(string.dropLast()) : string
+        if string.hasSuffix(",") {
+            return String(string.dropLast())
+        } else if string.hasSuffix(", ") {
+            return String(string.dropLast().dropLast())
+        }
+
+        return string
     }
 
     static func pathToPascal(_ value: Any?) throws -> Any? {

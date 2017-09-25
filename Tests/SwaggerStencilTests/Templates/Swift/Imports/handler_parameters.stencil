@@ -1,0 +1,10 @@
+{% macro handlerParameters operation %}
+{% set contents %}
+{% for parameter in operation.parameters %}
+{% if parameter|parameterName != "Authenticated-User-ID" %}
+{{ parameter|parameterName|toCamel }}: {{ parameter|parameterType:"swift" }}, 
+{% endif %}
+{% endfor %}
+{% endset %}
+{{ contents|removeNewlines|trimTrailingComma|join:", " }}
+{% endmacro %}

@@ -23,7 +23,7 @@ extension Filters {
         case .golang:
             return try response.schema.map { try golangSchemaType(schema: $0) } ?? "models.Empty"
         case .swift:
-            throw TemplateSyntaxError("Unsupported language")
+            return try response.schema.map { try swiftSchemaType(schema: $0) } ?? "Void"
         }
     }
 }

@@ -17,7 +17,7 @@ type {{ name|toPascal }} struct {
 {{ propertyName|toPascal }} {{ propertySchema|schemaType:"golang" }}
 {% endfor %}
 {% endset %}
-{{ contents|alphabetizeLines|setIndentation:"    " }}
+{{ contents|setIndentation:"    " }}
 }
 
 {% endfor %}

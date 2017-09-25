@@ -2,6 +2,23 @@ import SwaggerParser
 import Stencil
 
 extension Filters {
+    static func hasNonAuthHeaderParameter(value: Any?) throws -> Any? {
+        if let operation = value as? Operation {
+            let headerParameters = operation.parameters.filter { $0.structure.fixedFields.location == .header }
+            if headerParameters.count == 0 {
+                return ""
+            } else if headerParameters.count > 1 {
+                return "true"
+            } else if let name = headerParameters.first?.structure.fixedFields.name, name == "Authenticated-User-ID" {
+                return ""
+            } else {
+                return ""
+            }
+        }
+
+        throw TemplateSyntaxError("Expected Operation as value")
+    }
+
     static func hasParameter(value: Any?, arguments: [Any?]) throws -> Any? {
         guard let locationString = (arguments.first ?? nil) as? String,
             let location = ParameterLocation(rawValue: locationString) else

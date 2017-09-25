@@ -8,6 +8,7 @@ extension Extension {
         self.registerFilter("parameterType", filter: Filters.parameterType)
         self.registerFilter("responseType", filter: Filters.responseType)
         self.registerFilter("hasParameter", filter: Filters.hasParameter)
+        self.registerFilter("hasNonAuthHeaderParameter", filter: Filters.hasNonAuthHeaderParameter)
         self.registerFilter("isParameter", filter: Filters.isParameter)
         self.registerFilter("handlerName", filter: Filters.handlerName)
 

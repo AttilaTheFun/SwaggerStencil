@@ -7,44 +7,67 @@ import StencilSwiftKit
 @testable import SwaggerStencil
 
 class SwaggerStencilTests: XCTestCase {
-    var generatedFolderPath: PathKit.Path!
-    var golangPackagePath: PathKit.Path!
+    var stencilExtension: Extension!
     var templateFolderPath: PathKit.Path!
+    var golangFullPath: PathKit.Path!
+    var swiftFullPath: PathKit.Path!
 
     override func setUp() {
+        // Load extension:
+        stencilExtension = Extension()
+        stencilExtension.registerStencilSwiftExtensions()
+        stencilExtension.registerCustomFilters()
+
         let fileURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
         templateFolderPath = Path(fileURL.path) + "Templates"
-
-        let sourcePath = Path("/Users/Logan/go/src/")
-        golangPackagePath = Path("github.com/attilathefun/snags")
-        generatedFolderPath = sourcePath + golangPackagePath
+        golangFullPath = "/Users/Logan/go/src/github.com/attilathefun"
+        swiftFullPath = "/Users/Logan/swift/Snag"
     }
 
-    func testExample() throws {
+//    func testGolang() throws {
+//        let packageName = "phone"
+//        let fullPath = golangFullPath + packageName
+//        let relativePath = "github.com/attilathefun/" + packageName
+//        let swagger = try self.loadSwagger(swaggerPath: fullPath)
+//        let context = ["swagger": swagger, "path": relativePath] as [String : Any]
+//        let templatePath = templateFolderPath + "Go"
+//        self.renderTemplates(templatePath: templatePath, outputPath: fullPath, fileExtension: ".go",
+//                             context: context)
+//    }
 
-        // Load context:
-        let swaggerFilePath = generatedFolderPath + "swagger.yaml"
+    func testSwift() throws {
+        let swagger = try self.loadSwagger(swaggerPath: golangFullPath, isYAML: false, fileName: "merged")
+        let context = ["swagger": swagger] as [String : Any]
+        let templatePath = templateFolderPath + "Swift"
+        self.renderTemplates(templatePath: templatePath, outputPath: swiftFullPath, fileExtension: ".swift",
+                             context: context)
+    }
+
+    private func loadSwagger(swaggerPath: PathKit.Path, isYAML: Bool = true,
+                             fileName: String = "swagger") throws -> Swagger
+    {
+        let fileName = fileName + (isYAML ? ".yaml" : ".json")
+        let swaggerFilePath = swaggerPath + fileName
         let swaggerString = try swaggerFilePath.read(.utf8)
-        let yaml = try Yaml.load(swaggerString)
-        let dictionary = try yaml.toDictionary()
-        let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [])
-        let jsonString = String(data: jsonData, encoding: .utf8)!
-        let swagger = try Swagger(from: jsonString)
-        let context: [String : Any] = [
-            "swagger": swagger,
-            "path": golangPackagePath.string,
-        ]
+        let jsonString: String
+        if isYAML {
+            let yaml = try Yaml.load(swaggerString)
+            let dictionary = try yaml.toDictionary()
+            let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: [])
+            jsonString = String(data: jsonData, encoding: .utf8)!
+        } else {
+            jsonString = swaggerString
+        }
 
-        // Load extension:
-        let ext = Extension()
-        ext.registerStencilSwiftExtensions()
-        ext.registerCustomFilters()
+        return try Swagger(from: jsonString)
+    }
 
-        // Load paths:
-        let basePath = templateFolderPath + "Go/Server"
-        let importsPath = basePath + "Imports"
-        let includesPath = basePath + "Includes"
-        let packagesPath = basePath + "Packages"
+    private func renderTemplates(templatePath: PathKit.Path, outputPath: PathKit.Path, fileExtension: String,
+                                 context: [String : Any])
+    {
+        let importsPath = templatePath + "Imports"
+        let includesPath = templatePath + "Includes"
+        let packagesPath = templatePath + "Packages"
         let paths = [
             importsPath,
             includesPath,
@@ -53,26 +76,20 @@ class SwaggerStencilTests: XCTestCase {
 
         // Load environment:
         let loader = FileSystemLoader(paths: paths)
-        let environment = Environment(loader: loader, extensions: [ext],
+        let environment = Environment(loader: loader, extensions: [self.stencilExtension],
                                       templateClass: Template.self)
 
         // Generate the code:
         do {
             for packagePath in try packagesPath.children() where packagePath.isDirectory {
                 let packageName = packagePath.lastComponent
-                let generatedPackagePath = generatedFolderPath + packageName
+                let generatedPackagePath = outputPath + packageName
                 try generatedPackagePath.mkpath()
-
-                for filePath in try packagePath.children() where filePath.lastComponent.hasSuffix(".go") {
+                let children = try packagePath.children()
+                for filePath in children where filePath.lastComponent.hasSuffix(fileExtension) {
                     let fileName = filePath.lastComponent
-
-//                    if fileName != "client.go" {
-//                        continue
-//                    }
-
                     let generatedFileName = generatedPackagePath + fileName
                     let templateName = String(describing: Path(packageName) + fileName)
-
                     let renderedTemplate = try environment.renderTemplate(name: templateName,
                                                                           context: context)
                     print(renderedTemplate)

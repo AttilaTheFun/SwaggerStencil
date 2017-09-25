@@ -1,0 +1,22 @@
+{% macro encodeItemToString parameterNameCamel items %}
+{% if items.type.string %}
+{{ parameterNameCamel }}
+{% elif items.type.number or items.type.integer or items|isType:"boolean" %}
+String({{ parameterNameCamel }})
+{% elif items.type.array %}
+{{ parameterNameCamel }}.map { {% call encodeItemToString "$0" items.type.array.items %} }.joined(separator: ",")
+{% endif %}
+{% endmacro %}
+
+{% macro encodeParameterToString either %}
+{% set contents %}
+{% if either.a %}
+{% set parameterNameCamel %}{{ either.a|parameterName|toCamel }}{% endset %}
+{% call encodeItemToString parameterNameCamel either.a.other.items %}
+{% elif either.b %}
+{% set parameterNameCamel %}{{ either.b.structure|parameterName|toCamel }}{% endset %}
+{% call encodeItemToString parameterNameCamel either.b.structure.other.items %}
+{% endif %}
+{% endset %}
+{{ contents|removeNewlines }}
+{% endmacro %}

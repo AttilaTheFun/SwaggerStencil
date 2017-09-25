@@ -1,0 +1,15 @@
+{% macro handlerResponse operation %}
+{% set contents %}
+{% set returnValuesString %}
+{% for code,response in operation.responses %}
+{{ response|responseType:"swift" }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% endset %}
+{% if returnValuesString %}
+Promise<{{ returnValuesString }}>
+{% else %}
+Promise<Void>
+{% endif %}
+{% endset %}
+{{ contents|removeNewlines }}
+{% endmacro %}

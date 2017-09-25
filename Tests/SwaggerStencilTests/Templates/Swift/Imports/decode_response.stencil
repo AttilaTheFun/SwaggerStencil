@@ -1,0 +1,56 @@
+{% macro firstResponseTypeHelper response %}
+{% if response.schema.some %}
+{{ response.schema|schemaType:"swift" }}
+{% else %}
+Void
+{% endif %}
+{% endmacro %}
+
+{% macro firstResponseType operation %}
+{% set contents %}
+{% for code,either in operation.responses %}
+{% if either.a %}
+{% call firstResponseTypeHelper either.a %}
+{% else %}
+{% call firstResponseTypeHelper either.b.structure %}
+{% endif %}
+{% endfor %}
+{% endset %}
+{{ contents|removeNewlines }}
+{% endmacro %}
+
+{% macro decodeResponseHelper response %}
+{% if response.schema.some %}
+                guard let data = data else {
+                    throw ClientError.noData
+                }
+
+                return try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
+{% else %}
+                return
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponse either %}
+{% if either.a %}
+{% call decodeResponseHelper either.a %}
+{% else %}
+{% call decodeResponseHelper either.b.structure %}
+{% endif %}
+{% endmacro %}
+
+{% macro decodeErrorHelper response %}
+                guard let data = data else {
+                    throw ClientError.noData
+                }
+
+                throw try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
+{% endmacro %}
+
+{% macro decodeError either %}
+{% if either.a %}
+{% call decodeErrorHelper either.a %}
+{% else %}
+{% call decodeErrorHelper either.b.structure %}
+{% endif %}
+{% endmacro %}
