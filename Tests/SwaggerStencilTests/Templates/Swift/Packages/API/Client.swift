@@ -27,9 +27,11 @@ public final class Client {
     {
         let populatedPath = path.populatePath(keyValuePairs: pathParameters)
         let queryParameterString = "?" + queryParameters.stringFromQueryParameters()
-        let url = self.baseURL
-            .appendingPathComponent(populatedPath)
-            .appendingPathComponent(queryParameterString)
+        var url = self.baseURL.appendingPathComponent(populatedPath)
+        if queryParameters.count > 0 {
+            url = url.appendingPathComponent(queryParameterString)
+        }
+
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.httpBody = body
