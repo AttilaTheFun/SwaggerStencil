@@ -12,7 +12,7 @@ extension API {
 {% set handlerName %}{{ path|handlerName:operationType }}{% endset %}
 
     /// {{ operation.summary }}
-    public static func {{ handlerName }}({% call handlerParameters operation %}) -> {% call handlerResponse operation %} {
+    public static func {{ handlerName|toCamel }}({% call handlerParameters operation %}) -> {% call handlerResponse operation %} {
 {% if operation|hasParameter:"path" %}
         var pathParameters = [String: String]()
 {% for parameter in operation.parameters where parameter|isParameter:"path" %}

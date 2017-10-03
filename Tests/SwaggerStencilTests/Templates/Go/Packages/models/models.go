@@ -14,7 +14,7 @@ type {{ name|toPascal }} struct {
 {% if description %}{{ description|wrapWidth:120,"// " }}
 
 {% endif %}
-{{ propertyName|toPascal }} {{ propertySchema|schemaType:"golang" }}
+{{ propertyName|toPascal }} {{ propertySchema|schemaType:"golang" }} `json:"{{ propertyName }}"`
 {% endfor %}
 {% endset %}
 {{ contents|setIndentation:"    " }}

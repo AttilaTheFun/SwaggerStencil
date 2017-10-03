@@ -5,7 +5,7 @@ extension Filters {
     static func swiftSchemaType(schema: Schema) throws -> String {
         switch schema.type {
         case .structure(let structure):
-            return structure.name
+            return "Models." + structure.name
         case .array(let array):
             switch array.items {
             case .one(let schema):

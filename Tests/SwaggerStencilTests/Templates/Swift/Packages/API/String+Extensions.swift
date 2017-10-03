@@ -27,7 +27,7 @@ extension String {
     func populatePath(keyValuePairs: [String : String]) -> String {
         var populated = self
         for (key, value) in keyValuePairs {
-            populated = populated.replacingOccurrences(of: "{\(key)", with: value)
+            populated = populated.replacingOccurrences(of: "{\(key)}", with: value)
         }
 
         return populated

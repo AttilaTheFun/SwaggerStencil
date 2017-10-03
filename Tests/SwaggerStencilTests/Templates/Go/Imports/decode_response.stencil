@@ -13,7 +13,7 @@
         {{ responseName }}64, err := strconv.ParseInt({{ responseName }}String, 10, 32)
         {{ responseName }} = {{ responseName }}64.(int32)
 {% else %}
-        {{ responseName }}, err := strconv.ParseInt({{ responseName }}String, 10, 64)
+        {{ responseName }}, err = strconv.ParseInt({{ responseName }}String, 10, 64)
 {% endif %}
 {% call returnError %}
 {% endmacro %}
@@ -23,7 +23,7 @@
         buf.ReadFrom(response.Body)
         {{ responseName }}String := buf.String()
 {% if schema.type.string %}
-        {{ responseName }} := {{ responseName }}String
+        {{ responseName }} = {{ responseName }}String
 {% elif schema|isType:"boolean" %}
         {{ responseName }}, err = strconv.ParseBool({{ responseName }}String)
 {% elif schema.type.number %}

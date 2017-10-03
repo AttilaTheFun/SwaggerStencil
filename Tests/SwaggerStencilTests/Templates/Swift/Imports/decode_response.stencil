@@ -19,13 +19,25 @@ Void
 {{ contents|removeNewlines }}
 {% endmacro %}
 
-{% macro decodeResponseHelper response %}
-{% if response.schema.some %}
+{% macro decodeResponseHelper2 response schema %}
                 guard let data = data else {
                     throw ClientError.noData
                 }
 
+{% if schema.type.structure or schema.type.array or schema|isType:"boolean" %}
                 return try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
+{% elif schema.type.string %}
+                guard let string = String(data: data, encoding: .utf8) else {
+                    throw ClientError.badString
+                }
+
+                return string
+{% endif %}
+{% endmacro %}
+
+{% macro decodeResponseHelper response %}
+{% if response.schema.some %}
+{% call decodeResponseHelper2 response response.schema%}
 {% else %}
                 return
 {% endif %}

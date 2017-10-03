@@ -4,6 +4,7 @@ import PromiseKit
 public enum ClientError: Error {
     case noResponse
     case noData
+    case badString
 }
 
 public final class Client {
@@ -27,9 +28,13 @@ public final class Client {
     {
         let populatedPath = path.populatePath(keyValuePairs: pathParameters)
         let queryParameterString = "?" + queryParameters.stringFromQueryParameters()
-        var url = self.baseURL.appendingPathComponent(populatedPath)
+        var urlString = self.baseURL.absoluteString + populatedPath
         if queryParameters.count > 0 {
-            url = url.appendingPathComponent(queryParameterString)
+            urlString += queryParameterString
+        }
+
+        guard let url = URL(string: urlString) else {
+            return Promise(error: ClientError.badURL)
         }
 
         var request = URLRequest(url: url)
