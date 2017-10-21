@@ -19,7 +19,8 @@ class SwaggerStencilTests: XCTestCase {
         stencilExtension.registerCustomFilters()
 
         let fileURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
-        templateFolderPath = Path(fileURL.path) + "Templates"
+        let projectRoot = fileURL.deletingLastPathComponent()
+        templateFolderPath = Path(projectRoot.path) + "Templates"
         golangFullPath = "/Users/Logan/go/src/github.com/attilathefun"
         swiftFullPath = "/Users/Logan/swift/Snag"
     }
