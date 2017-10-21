@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/SwiftGen/StencilSwiftKit.git",
         "state": {
           "branch": null,
-          "revision": "ed558b57e895558c68a6f0aa0e283e5d31b2d210",
-          "version": "2.1.0"
+          "revision": "faba89967a46021a89719fae5bdd6b1b38c8a222",
+          "version": "2.3.0"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/AttilaTheFun/SwaggerParser.git",
         "state": {
           "branch": null,
-          "revision": "e0651b410c560b118bbd8d272fd4c7caffee8af8",
-          "version": "0.5.1"
+          "revision": "c5dca67137dcf0d21cd369ab96af8e517323f0be",
+          "version": "0.6.1"
         }
       },
       {

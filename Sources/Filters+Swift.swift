@@ -6,12 +6,15 @@ extension Filters {
         switch schema.type {
         case .structure(let structure):
             return "Models." + structure.name
+        case .object(let object):
+            return try self.dictionary(properties: object.properties,
+                                       additionalProperties: object.additionalProperties)
         case .array(let array):
             switch array.items {
             case .one(let schema):
                 return "[\(try swiftSchemaType(schema: schema))]"
-            case .many:
-                throw TemplateSyntaxError("Unsupported schema type")
+            case .many(let schemas):
+                return try self.tuple(schemas: schemas)
             }
         case .number(let format):
             switch format {
@@ -35,7 +38,7 @@ extension Filters {
             return "Bool"
         case .any:
             return "Any"
-        case .allOf, .file, .enumeration, .object, .null:
+        case .allOf, .file, .enumeration, .null:
             throw TemplateSyntaxError("Unsupported schema type")
         }
     }
@@ -65,6 +68,45 @@ extension Filters {
         case .boolean:
             return "Bool"
         }
+    }
+    
+    private static func dictionary(properties: [String: Schema],
+                                   additionalProperties: Either<Bool, Schema>) throws -> String
+    {
+        var schemaType: String?
+        for (_, schema) in properties {
+            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            if schemaType != nil, schemaType != propertySchemaType {
+                schemaType = "Any"
+            } else {
+                schemaType = propertySchemaType
+            }
+        }
+        
+        switch additionalProperties {
+        case .a(false):
+            break
+        case .a(true):
+            assertionFailure("Additional properties should never be 'true' - if allowed it should be a specific schema.")
+        case .b(let schema):
+            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            if schemaType != nil, schemaType != propertySchemaType {
+                schemaType = "Any"
+            } else {
+                schemaType = propertySchemaType
+            }
+        }
+        
+        if let schemaType = schemaType {
+            return "[String: \(schemaType)]"
+        }
+        
+        return "[String: Empty]"
+    }
+    
+    private static func tuple(schemas: [Schema]) throws -> String {
+        let schemaTypes = try schemas.map { try self.golangSchemaType(schema: $0) }
+        return "(\(schemaTypes.joined(separator: ","))"
     }
 }
 

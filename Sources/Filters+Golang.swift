@@ -7,13 +7,14 @@ extension Filters {
         case .structure(let structure):
             return "models." + structure.name
         case .object(let object):
-            return try anonymousStruct(properties: object.properties)
+            return try dictionary(properties: object.properties,
+                                  additionalProperties: object.additionalProperties)
         case .array(let array):
             switch array.items {
             case .one(let schema):
-                return "[]\(try golangSchemaType(schema: schema))"
+                return "[]\(try self.golangSchemaType(schema: schema))"
             case .many(let schemas):
-                return try anonymousStruct(anonymousFields: schemas)
+                return try self.anonymousStruct(schemas: schemas)
             }
         case .number(let format):
             switch format {
@@ -45,7 +46,7 @@ extension Filters {
     static func golangItemsType(items: Items) throws -> String {
         switch items.type {
         case .array(let array):
-            return "[]\(try golangItemsType(items: array.items))"
+            return "[]\(try self.golangItemsType(items: array.items))"
         case .number(let item):
             switch item.format {
             case .some(.float):
@@ -69,11 +70,42 @@ extension Filters {
         }
     }
 
-    private static func anonymousStruct(properties: [String: Schema] = [:],
-                                        anonymousFields: [Schema] = []) throws -> String
+    private static func dictionary(properties: [String: Schema],
+                                   additionalProperties: Either<Bool, Schema>) throws -> String
     {
-        var properties = try properties.map { "\($0.toPascal()) \(try golangSchemaType(schema: $1))"}
-        properties += try anonymousFields.map { try golangSchemaType(schema: $0) }
-        return "struct {\(properties.joined(separator: ";"));}"
+        var schemaType: String?
+        for (_, schema) in properties {
+            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            if schemaType != nil, schemaType != propertySchemaType {
+                schemaType = "interface{}"
+            } else {
+                schemaType = propertySchemaType
+            }
+        }
+        
+        switch additionalProperties {
+        case .a(false):
+            break
+        case .a(true):
+            assertionFailure("Additional properties should never be 'true' - if allowed it should be a specific schema.")
+        case .b(let schema):
+            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            if schemaType != nil, schemaType != propertySchemaType {
+                schemaType = "interface{}"
+            } else {
+                schemaType = propertySchemaType
+            }
+        }
+
+        if let schemaType = schemaType {
+            return "map[string]\(schemaType)"
+        }
+        
+        return "map[string]empty"
+    }
+    
+    private static func anonymousStruct(schemas: [Schema]) throws -> String {
+        let schemaTypes = try schemas.map { try self.golangSchemaType(schema: $0) }
+        return "struct {\(schemaTypes.joined(separator: ";"));}"
     }
 }

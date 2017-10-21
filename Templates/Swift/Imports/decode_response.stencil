@@ -20,11 +20,7 @@ Void
 {% endmacro %}
 
 {% macro decodeResponseHelper2 response schema %}
-                guard let data = data else {
-                    throw ClientError.noData
-                }
-
-{% if schema.type.structure or schema.type.array or schema|isType:"boolean" %}
+{% if schema.type.structure or schema.type.array %}
                 return try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
 {% elif schema.type.string %}
                 guard let string = String(data: data, encoding: .utf8) else {
@@ -32,6 +28,16 @@ Void
                 }
 
                 return string
+{% elif schema|isType:"boolean" %}
+                guard let string = String(data: data, encoding: .utf8) else {
+                    throw ClientError.badString
+                }
+
+                guard let boolean = Bool(string) else {
+                    throw ClientError.badBoolean
+                }
+
+                return boolean
 {% endif %}
 {% endmacro %}
 
@@ -52,10 +58,6 @@ Void
 {% endmacro %}
 
 {% macro decodeErrorHelper response %}
-                guard let data = data else {
-                    throw ClientError.noData
-                }
-
                 throw try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
 {% endmacro %}
 

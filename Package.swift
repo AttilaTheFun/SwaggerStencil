@@ -1,12 +1,36 @@
-// swift-tools-version:3.1
+// swift-tools-version:4.0
 
 import PackageDescription
 
 let package = Package(
     name: "SwaggerStencil",
+    products: [
+        .library(
+            name: "SwaggerStencil",
+            type: .static,
+            targets: ["SwaggerStencil"]
+        ),
+    ],
     dependencies: [
-        .Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 3),
-        .Package(url: "https://github.com/SwiftGen/StencilSwiftKit.git", majorVersion: 2),
-        .Package(url: "https://github.com/AttilaTheFun/SwaggerParser.git", majorVersion: 0, minor: 5)
+        .package(url: "https://github.com/SwiftGen/StencilSwiftKit.git", from: "2.2.0"),
+        .package(url: "https://github.com/AttilaTheFun/SwaggerParser.git", from: "0.6.1"),
+        .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0")
+    ],
+    targets: [
+        .target(
+            name: "SwaggerStencil",
+            dependencies: [
+                .product(name: "StencilSwiftKit"),
+                .product(name: "SwaggerParser"),
+            ],
+            path: "Sources"
+        ),
+        .testTarget(
+            name: "SwaggerStencilTests",
+            dependencies: [
+                .product(name: "Yaml"),
+            ],
+            path: "Tests"
+        ),
     ]
 )

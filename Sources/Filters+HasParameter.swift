@@ -1,5 +1,5 @@
-import SwaggerParser
 import Stencil
+import SwaggerParser
 
 extension Filters {
     static func hasNonAuthHeaderParameter(value: Any?) throws -> Any? {

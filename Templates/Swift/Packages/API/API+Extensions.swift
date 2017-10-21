@@ -21,7 +21,6 @@ extension API {
 {% else %}
         let pathParameters = [String: String]()
 {% endif %}
-
 {% if operation|hasParameter:"query" %}
         var queryParameters = [String: String]()
 {% for parameter in operation.parameters where parameter|isParameter:"query" %}
@@ -30,7 +29,6 @@ extension API {
 {% else %}
         let queryParameters = [String: String]()
 {% endif %}
-
 {% if operation|hasParameter:"body" %}
 {% for parameter in operation.parameters where parameter|isParameter:"body" %}
         let body = try? JSONEncoder().encode({{ parameter|parameterName|toCamel }})
@@ -38,7 +36,6 @@ extension API {
 {% else %}
         let body: Data? = nil
 {% endif %}
-
 {% if operation|hasNonAuthHeaderParameter %}
         var headers = [String: String]()
 {% for parameter in operation.parameters where parameter|isParameter:"header" %}
@@ -49,7 +46,6 @@ extension API {
 {% else %}
         let headers = [String: String]()
 {% endif %}
-
         return firstly {
             self.client.makeRequest(method: "{{ operationType|uppercase }}", path: "{{ path }}",
                                     pathParameters: pathParameters, queryParameters: queryParameters,
