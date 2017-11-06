@@ -1,6 +1,11 @@
 {% macro encodeItemToString parameterNameCamel items %}
 {% if items.type.string %}
+{% set isDateTime %}{{ items.type.string|isStringFormat:"date-time" }}{% endset %}
+{% if isDateTime %}
+{{ parameterNameCamel }}.rfc3339
+{% else %}
 {{ parameterNameCamel }}
+{% endif %}
 {% elif items.type.number or items.type.integer or items|isType:"boolean" %}
 String({{ parameterNameCamel }})
 {% elif items.type.array %}

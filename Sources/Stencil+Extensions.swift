@@ -10,6 +10,7 @@ extension Extension {
         self.registerFilter("hasParameter", filter: Filters.hasParameter)
         self.registerFilter("hasNonAuthHeaderParameter", filter: Filters.hasNonAuthHeaderParameter)
         self.registerFilter("isParameter", filter: Filters.isParameter)
+        self.registerFilter("isStringFormat", filter: Filters.isStringFormat)
         self.registerFilter("handlerName", filter: Filters.handlerName)
 
         self.registerFilter("hasSchema", filter: Filters.hasSchema)

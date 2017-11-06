@@ -21,7 +21,7 @@ Void
 
 {% macro decodeResponseHelper2 response schema %}
 {% if schema.type.structure or schema.type.array %}
-                return try JSONDecoder().decode({{ response.schema|schemaType:"swift" }}.self, from: data)
+                return try kJSONDecoder.decode({{ response.schema|schemaType:"swift" }}.self, from: data)
 {% elif schema.type.string %}
                 guard let string = String(data: data, encoding: .utf8) else {
                     throw ClientError.badString

@@ -12,8 +12,11 @@
 {% if integer.format.int32 %}
     {{ parameterNameCamel }}64, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 32)
     {{ parameterNameCamel }} := {{ parameterNameCamel }}64.(int32)
-{% else %}
+{% elif integer.format.int64 %}
     {{ parameterNameCamel }}, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 64)
+{% else %}
+    {{ parameterNameCamel }}64, err := strconv.ParseInt({{ parameterNameCamel }}String, 10, 64)
+    {{ parameterNameCamel }} := int({{ parameterNameCamel }}64)
 {% endif %}
 {% call returnError %}
 {% endmacro %}

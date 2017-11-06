@@ -7,10 +7,10 @@
 {% endmacro %}
 
 {% macro encodeIntegerItem parameterNameCamel integer %}
-{% if integer.format.int32 %}
-    {{ parameterNameCamel }}String := strconv.FormatInt(int64({{ parameterNameCamel }}), 10)
-{% else %}
+{% if integer.format.int64 %}
     {{ parameterNameCamel }}String := strconv.FormatInt({{ parameterNameCamel }}, 10)
+{% else %}
+    {{ parameterNameCamel }}String := strconv.FormatInt(int64({{ parameterNameCamel }}), 10)
 {% endif %}
 {% endmacro %}
 

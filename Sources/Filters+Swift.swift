@@ -12,7 +12,7 @@ extension Filters {
         case .array(let array):
             switch array.items {
             case .one(let schema):
-                return "[\(try swiftSchemaType(schema: schema))]"
+                return "[\(try self.swiftSchemaType(schema: schema))]"
             case .many(let schemas):
                 return try self.tuple(schemas: schemas)
             }
@@ -32,6 +32,12 @@ extension Filters {
             case .none:
                 return "Int"
             }
+        case .string(.some(let format)):
+            if case .dateTime = format {
+                return "Date"
+            }
+
+            return "String"
         case .string:
             return "String"
         case .boolean:
@@ -63,7 +69,11 @@ extension Filters {
             case .none:
                 return "Int"
             }
-        case .string:
+        case .string(let item):
+            if let format = item.format, case .dateTime = format {
+                return "Date"
+            }
+
             return "String"
         case .boolean:
             return "Bool"
@@ -75,7 +85,7 @@ extension Filters {
     {
         var schemaType: String?
         for (_, schema) in properties {
-            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            let propertySchemaType = try self.swiftSchemaType(schema: schema)
             if schemaType != nil, schemaType != propertySchemaType {
                 schemaType = "Any"
             } else {
@@ -89,7 +99,7 @@ extension Filters {
         case .a(true):
             assertionFailure("Additional properties should never be 'true' - if allowed it should be a specific schema.")
         case .b(let schema):
-            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            let propertySchemaType = try self.swiftSchemaType(schema: schema)
             if schemaType != nil, schemaType != propertySchemaType {
                 schemaType = "Any"
             } else {
@@ -105,7 +115,7 @@ extension Filters {
     }
     
     private static func tuple(schemas: [Schema]) throws -> String {
-        let schemaTypes = try schemas.map { try self.golangSchemaType(schema: $0) }
+        let schemaTypes = try schemas.map { try self.swiftSchemaType(schema: $0) }
         return "(\(schemaTypes.joined(separator: ","))"
     }
 }

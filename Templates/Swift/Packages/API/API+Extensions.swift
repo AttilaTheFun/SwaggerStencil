@@ -2,6 +2,25 @@ import Foundation
 import PromiseKit
 import Models
 
+private let kRFC3339DateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"
+    formatter.timeZone = TimeZone(identifier: "UTC")
+    return formatter
+}()
+
+private let kJSONDecoder: JSONDecoder = {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .formatted(kRFC3339DateFormatter)
+    return decoder
+}()
+
+private let kJSONEncoder: JSONEncoder = {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .formatted(kRFC3339DateFormatter)
+    return encoder
+}()
+
 {% import "handler_parameters.stencil" %}
 {% import "handler_response.stencil" %}
 {% import "decode_response.stencil" %}
@@ -31,7 +50,7 @@ extension API {
 {% endif %}
 {% if operation|hasParameter:"body" %}
 {% for parameter in operation.parameters where parameter|isParameter:"body" %}
-        let body = try? JSONEncoder().encode({{ parameter|parameterName|toCamel }})
+        let body = try? kJSONEncoder.encode({{ parameter|parameterName|toCamel }})
 {% endfor %}
 {% else %}
         let body: Data? = nil
