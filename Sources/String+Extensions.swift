@@ -5,11 +5,11 @@ import Foundation
 extension String {
 
     func padded(to width: Int) -> String {
-        if self.characters.count >= width {
+        if self.count >= width {
             return self
         }
 
-        return self + String(repeating: " ", count: width - self.characters.count)
+        return self + String(repeating: " ", count: width - self.count)
     }
 }
 
@@ -53,8 +53,8 @@ extension String {
             return .empty
         }
 
-        let containsUnderscore = self.characters.contains("_")
-        let containsHyphen = self.characters.contains("-")
+        let containsUnderscore = self.contains("_")
+        let containsHyphen = self.contains("-")
         if containsUnderscore && containsHyphen {
             return .inconsistent
         } else if containsUnderscore {

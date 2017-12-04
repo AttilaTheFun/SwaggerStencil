@@ -26,7 +26,7 @@ class SwaggerStencilTests: XCTestCase {
     }
 
 //    func testGolang() throws {
-//        let packageName = "feeds"
+//        let packageName = "messages"
 //        let fullPath = golangFullPath + packageName
 //        let relativePath = "github.com/attilathefun/" + packageName
 //        let swagger = try self.loadSwagger(swaggerPath: fullPath)

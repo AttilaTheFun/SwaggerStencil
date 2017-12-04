@@ -45,7 +45,7 @@ extension Filters {
         }
 
         let width = Int(widthFloat)
-        let strideWidth = max(0, width - prefix.characters.count)
+        let strideWidth = max(0, width - prefix.count)
         let wrapped = value.wrap(columns: strideWidth)
 
         return "\n" + wrapped
