@@ -2,7 +2,7 @@
 {% set contents %}
 {% set returnValuesString %}
 {% for code,response in operation.responses %}
-{{ response|responseType:"swift" }}{% if not forloop.last %}, {% endif %}
+{{ response|swiftResponseType }}{% if not forloop.last %}, {% endif %}
 {% endfor %}
 {% endset %}
 {% if returnValuesString %}

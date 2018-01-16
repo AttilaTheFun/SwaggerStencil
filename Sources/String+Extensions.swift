@@ -217,7 +217,7 @@ extension String {
 
     fileprivate func pascalComponent() -> String {
         let lowercased = self.lowercased()
-        let acronyms = ["id", "uuid", "url"]
+        let acronyms = ["id", "api", "uuid", "url"]
         if acronyms.contains(lowercased) {
             return self.uppercased()
         } else if self.last == "s" && acronyms.contains(String(self.dropLast())) {

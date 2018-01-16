@@ -1,5 +1,4 @@
 import Foundation
-import Kit
 import PromiseKit
 
 public enum ClientError: String {

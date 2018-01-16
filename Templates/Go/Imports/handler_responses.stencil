@@ -2,13 +2,13 @@
 
 {% set defaultResponseString %}
 {% if operation.defaultResponse %}
-{{ operation.defaultResponse|responseType:"golang" }}
+{{ operation.defaultResponse|golangResponseType }}
 {% endif %}
 {% endset %}
 
 {% set returnValuesString %}
 {% for code,response in operation.responses %}
-{{ response|responseType:"golang" }}{% if not forloop.last %}, {% endif %}
+{{ response|golangResponseType }}{% if not forloop.last %}, {% endif %}
 {% endfor %}
 {% endset %}
 

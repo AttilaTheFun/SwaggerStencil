@@ -23,6 +23,7 @@ bindings.BindServices()
 r.HandleFunc("{{ path }}", handlers.{{ handlerName }}).Methods("{{ operationType|uppercase }}")
 {% endfor %}
 {% endfor %}
+log.Println("Listening on :8080")
 log.Fatal(http.ListenAndServe(":8080", r))
 {% endset %}
 {{ contents|setIndentation:"    " }}

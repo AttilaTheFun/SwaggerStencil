@@ -2,28 +2,32 @@ import Stencil
 import SwaggerParser
 
 extension Filters {
-    static func responseType(value: Any?, arguments: [Any?]) throws -> Any? {
-        let response: Response
+    static func golangResponseType(value: Any?, arguments: [Any?]) throws -> Any? {
+        let response = try self.response(fromValue: value)
+        var includeModels = true
+        if let includeModelsFloat = arguments.first as? Float, includeModelsFloat <= 0 {
+            includeModels = false
+        }
+
+        if let schema = response.schema {
+            return try self.golangSchemaType(schema: schema, includeModels: includeModels)
+        } else {
+            return includeModels ? "models.Empty" : "Empty"
+        }
+    }
+
+    static func swiftResponseType(value: Any?) throws -> Any? {
+        let response = try self.response(fromValue: value)
+        return try response.schema.map { try self.swiftSchemaType(schema: $0) } ?? "Void"
+    }
+
+    static func response(fromValue value: Any?) throws -> Response {
         if let either = value as? Either<Response, Structure<Response>> {
-            response = either.structure
+            return either.structure
         } else if let valueParameter = value as? Response {
-            response = valueParameter
+            return valueParameter
         } else {
             throw TemplateSyntaxError("Expected Response")
-        }
-
-        guard let languageStringOptional = arguments.first,
-            let languageString = languageStringOptional as? String,
-            let language = Language(rawValue: languageString) else
-        {
-            throw TemplateSyntaxError("Expected language arguemnt")
-        }
-
-        switch language {
-        case .golang:
-            return try response.schema.map { try golangSchemaType(schema: $0) } ?? "models.Empty"
-        case .swift:
-            return try response.schema.map { try swiftSchemaType(schema: $0) } ?? "Void"
         }
     }
 }

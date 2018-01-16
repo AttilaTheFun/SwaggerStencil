@@ -2,7 +2,7 @@
 {% set contents %}
 {% for parameter in operation.parameters %}
 {% if parameter|parameterName != "Authenticated-User-ID" %}
-{{ parameter|parameterName|toCamel }}: {{ parameter|parameterType:"swift" }}, 
+{{ parameter|parameterName|toCamel }}: {{ parameter|swiftParameterType }}, 
 {% endif %}
 {% endfor %}
 {% endset %}

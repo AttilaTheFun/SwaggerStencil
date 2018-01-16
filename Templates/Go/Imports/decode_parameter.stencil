@@ -4,7 +4,7 @@
 {% if isBody %}
     decoder := json.NewDecoder(r.Body)
     defer r.Body.Close()
-    var {{ parameterNameCamel }} {{ parameter|parameterType:"golang" }}
+    var {{ parameterNameCamel }} {{ parameter|golangParameterType }}
     err = decoder.Decode(&{{ parameterNameCamel }})
 {% call returnError %}
 {% else %}

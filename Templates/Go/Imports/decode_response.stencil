@@ -82,8 +82,8 @@
 {% macro setupResponse responseName response %}
 {% set hasSchema %}{{ response|hasSchema }}{% endset %}
 {% if hasSchema %}
-{% set isPrimitive %}{{ response|responseIsPrimitive }}{% endset %}
-{% set typeName %}{{ response|responseSchemaType:"golang" }}{% endset %}
+{% set isPrimitive %}{{ response|isPrimitive }}{% endset %}
+{% set typeName %}{{ response|golangSchemaType }}{% endset %}
 {% if isPrimitive %}
     var {{ responseName }} {{ typeName }}
 {% else %}

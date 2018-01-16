@@ -5,8 +5,7 @@ import SwaggerParser
 extension Extension {
     func registerCustomFilters() {
         self.registerFilter("parameterName", filter: Filters.parameterName)
-        self.registerFilter("parameterType", filter: Filters.parameterType)
-        self.registerFilter("responseType", filter: Filters.responseType)
+
         self.registerFilter("hasParameter", filter: Filters.hasParameter)
         self.registerFilter("hasNonAuthHeaderParameter", filter: Filters.hasNonAuthHeaderParameter)
         self.registerFilter("isParameter", filter: Filters.isParameter)
@@ -16,9 +15,6 @@ extension Extension {
         self.registerFilter("hasSchema", filter: Filters.hasSchema)
         self.registerFilter("isPrimitive", filter: Filters.isPrimitive)
         self.registerFilter("isType", filter: Filters.isType)
-        self.registerFilter("responseIsPrimitive", filter: Filters.responseIsPrimitive)
-        self.registerFilter("schemaType", filter: Filters.schemaType)
-        self.registerFilter("responseSchemaType", filter: Filters.responseSchemaType)
 
         self.registerFilter("wrapInCurlyBraces", filter: Filters.wrapInCurlyBraces)
         self.registerFilter("trimWhitespace", filter: Filters.trimWhitespace)
@@ -34,5 +30,15 @@ extension Extension {
         self.registerTag("import", parser: ImportNode.parse)
         self.registerTag("contains", parser: ContainsNode.parse)
         self.registerTag("notcontains", parser: NotContainsNode.parse)
+
+        // MARK: Golang
+        self.registerFilter("golangResponseType", filter: Filters.golangResponseType)
+        self.registerFilter("golangSchemaType", filter: Filters.golangSchemaType)
+        self.registerFilter("golangParameterType", filter: Filters.golangParameterType)
+
+        // MARK: Swift
+        self.registerFilter("swiftResponseType", filter: Filters.swiftResponseType)
+        self.registerFilter("swiftSchemaType", filter: Filters.swiftSchemaType)
+        self.registerFilter("swiftParameterType", filter: Filters.swiftParameterType)
     }
 }

@@ -21,7 +21,7 @@ import (
     "{{ path }}/models"
 {% endif %}
     "{{ path }}/service"
-    "github.com/attilathefun/registry"
+    "github.com/aphelionapps/utils/registry"
 {% if existsPathParameter %}
     "github.com/gorilla/mux"
 {% endif %}

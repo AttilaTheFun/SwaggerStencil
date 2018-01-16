@@ -1,6 +1,6 @@
 {% macro handlerParameters operation %}
 {% map operation.parameters into components %}
-{{ maploop.item|parameterName|toCamel }} {{ maploop.item|parameterType:"golang" }}
+{{ maploop.item|parameterName|toCamel }} {{ maploop.item|golangParameterType }}
 {% endmap %}
 {{ components|join:", " }}
 {% endmacro %}

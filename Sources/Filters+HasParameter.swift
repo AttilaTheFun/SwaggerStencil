@@ -55,15 +55,7 @@ extension Filters {
     }
 
     static func isParameter(value: Any?, arguments: [Any?]) throws -> Any? {
-        let parameter: Parameter
-        if let either = value as? Either<Parameter, Structure<Parameter>> {
-            parameter = either.structure
-        } else if let valueParameter = value as? Parameter {
-            parameter = valueParameter
-        } else {
-            throw TemplateSyntaxError("Expected Parameter")
-        }
-
+        let parameter = try self.parameter(forValue: value)
         guard let locationString = (arguments.first ?? nil) as? String,
             let location = ParameterLocation(rawValue: locationString) else
         {

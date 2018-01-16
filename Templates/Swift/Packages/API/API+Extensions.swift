@@ -1,6 +1,5 @@
 import Foundation
 import PromiseKit
-import Models
 
 private let kRFC3339DateFormatter: DateFormatter = {
     let formatter = DateFormatter()

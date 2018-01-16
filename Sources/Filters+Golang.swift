@@ -2,19 +2,21 @@ import Stencil
 import SwaggerParser
 
 extension Filters {
-    static func golangSchemaType(schema: Schema) throws -> String {
+    static func golangSchemaType(schema: Schema, includeModels: Bool) throws -> String {
         switch schema.type {
-        case .structure(let structure):
+        case .structure(let structure) where includeModels:
             return "models." + structure.name
+        case .structure(let structure):
+            return structure.name
         case .object(let object):
-            return try dictionary(properties: object.properties,
-                                  additionalProperties: object.additionalProperties)
+            return try dictionary(properties: object.properties, additionalProperties: object.additionalProperties,
+                                  includeModels: includeModels)
         case .array(let array):
             switch array.items {
             case .one(let schema):
-                return "[]\(try self.golangSchemaType(schema: schema))"
+                return "[]\(try self.golangSchemaType(schema: schema, includeModels: includeModels))"
             case .many(let schemas):
-                return try self.anonymousStruct(schemas: schemas)
+                return try self.anonymousStruct(schemas: schemas, includeModels: includeModels)
             }
         case .number(let format):
             switch format {
@@ -71,11 +73,12 @@ extension Filters {
     }
 
     private static func dictionary(properties: [String: Schema],
-                                   additionalProperties: Either<Bool, Schema>) throws -> String
+                                   additionalProperties: Either<Bool, Schema>,
+                                   includeModels: Bool) throws -> String
     {
         var schemaType: String?
         for (_, schema) in properties {
-            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            let propertySchemaType = try self.golangSchemaType(schema: schema, includeModels: includeModels)
             if schemaType != nil, schemaType != propertySchemaType {
                 schemaType = "interface{}"
             } else {
@@ -89,7 +92,7 @@ extension Filters {
         case .a(true):
             assertionFailure("Additional properties should never be 'true' - if allowed it should be a specific schema.")
         case .b(let schema):
-            let propertySchemaType = try self.golangSchemaType(schema: schema)
+            let propertySchemaType = try self.golangSchemaType(schema: schema, includeModels: includeModels)
             if schemaType != nil, schemaType != propertySchemaType {
                 schemaType = "interface{}"
             } else {
@@ -104,8 +107,8 @@ extension Filters {
         return "map[string]empty"
     }
     
-    private static func anonymousStruct(schemas: [Schema]) throws -> String {
-        let schemaTypes = try schemas.map { try self.golangSchemaType(schema: $0) }
+    private static func anonymousStruct(schemas: [Schema], includeModels: Bool) throws -> String {
+        let schemaTypes = try schemas.map { try self.golangSchemaType(schema: $0, includeModels: includeModels) }
         return "struct {\(schemaTypes.joined(separator: ";"));}"
     }
 }

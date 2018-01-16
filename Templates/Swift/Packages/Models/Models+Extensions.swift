@@ -1,6 +1,6 @@
-import Models
+import Foundation
 
-extension Models.Error: LocalizedError {
+extension APIError: LocalizedError {
     public var errorDescription: String? {
         return self.message
     }

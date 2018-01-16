@@ -5,8 +5,8 @@ package models
 type Empty struct{}
 
 {% for name,schema in swagger.definitions %}
-// {{ name|toPascal }} - {{ schema.metadata.description }}
-type {{ name|toPascal }} struct {
+// {{ name }} - {{ schema.metadata.description }}
+type {{ name }} struct {
 {% set contents %}
 {% for propertyName,propertySchema in schema.type.object.properties %}
 
@@ -14,7 +14,7 @@ type {{ name|toPascal }} struct {
 {% if description %}{{ description|wrapWidth:120,"// " }}
 
 {% endif %}
-{{ propertyName|toPascal }} {{ propertySchema|schemaType:"golang" }} `json:"{{ propertyName }}"`
+{{ propertyName|toPascal }} {{ propertySchema|golangSchemaType:0 }} `json:"{{ propertyName }}"`
 {% endfor %}
 {% endset %}
 {{ contents|setIndentation:"    " }}
