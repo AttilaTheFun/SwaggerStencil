@@ -18,19 +18,18 @@ extension ClientError: LocalizedError {
 public final class Client {
     private let baseURL: URL
     private let session: URLSession
-    private let delegate = ClientDelegate()
     private var requestFilters = [RequestFilter]()
     private var responseFilters = [ResponseFilter]()
 
     required public init(baseURL: URL, configuration: URLSessionConfiguration = .default) {
         self.baseURL = baseURL
-        self.session = URLSession(configuration: configuration, delegate: self.delegate, delegateQueue: nil)
+        self.session = URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
     }
 
     public func add(filter: RequestFilter) {
         self.requestFilters.append(filter)
     }
-    
+
     public func add(filter: ResponseFilter) {
         self.responseFilters.append(filter)
     }
@@ -51,29 +50,25 @@ public final class Client {
         request.allHTTPHeaderFields = headers
         self.requestFilters.forEach { request = $0.filter(request: request) }
 
-        return Promise { fulfill, reject in
+        return Promise { seal in
             let task = self.session.dataTask(with: request) { (data, response, error) in
                 if let error = error {
-                    return reject(error)
+                    return seal.reject(error)
                 }
-                
+
                 guard let data = data else {
-                    return reject(ClientError.noData)
+                    return seal.reject(ClientError.noData)
                 }
 
                 guard var response = response as? HTTPURLResponse else {
-                    return reject(ClientError.noResponse)
+                    return seal.reject(ClientError.noResponse)
                 }
 
                 self.responseFilters.forEach { response = $0.filter(response: response) }
-                fulfill((response, data))
+                seal.fulfill((response, data))
             }
 
             task.resume()
         }
     }
 }
-
-final class ClientDelegate: NSObject {}
-
-extension ClientDelegate: URLSessionTaskDelegate {}

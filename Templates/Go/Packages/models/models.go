@@ -1,23 +1,20 @@
 {% include "header.stencil" %}
 package models
 
+{% import "model_definitions.stencil" %}
+{% for name,schema in swagger.definitions %}
+{% set enumValues %}{{ schema.metadata.enumeratedValues }}{% endset %}
+{% if enumValues %}
+{% call enumDefinition name schema schema.metadata.enumeratedValues %}
+{% endif %}
+{% endfor %}
 // Empty - Used to indicate an empty response.
 type Empty struct{}
 
 {% for name,schema in swagger.definitions %}
-// {{ name }} - {{ schema.metadata.description }}
-type {{ name }} struct {
-{% set contents %}
-{% for propertyName,propertySchema in schema.type.object.properties %}
-
-{% set description %}{{ propertySchema.metadata.description }}{% endset %}
-{% if description %}{{ description|wrapWidth:120,"// " }}
-
+{% set enumValues %}{{ schema.metadata.enumeratedValues }}{% endset %}
+{% if not enumValues %}
+{% call modelDefinition name schema %}
 {% endif %}
-{{ propertyName|toPascal }} {{ propertySchema|golangSchemaType:0 }} `json:"{{ propertyName }}"`
 {% endfor %}
-{% endset %}
-{{ contents|setIndentation:"    " }}
-}
-
-{% endfor %}
+{% endimport %}

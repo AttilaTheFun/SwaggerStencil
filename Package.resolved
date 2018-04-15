@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/kylef/Stencil.git",
         "state": {
           "branch": null,
-          "revision": "65a461d0a103896c8ff7e3f17f7be1a5badadeb0",
-          "version": "0.9.0"
+          "revision": "cf7acea440124f6d348032123d8b163c51cfece0",
+          "version": "0.10.1"
         }
       },
       {
@@ -33,17 +33,17 @@
         "repositoryURL": "https://github.com/SwiftGen/StencilSwiftKit.git",
         "state": {
           "branch": null,
-          "revision": "faba89967a46021a89719fae5bdd6b1b38c8a222",
-          "version": "2.3.0"
+          "revision": "ffb22bf1c90f9284ee90db64ae226ccd63d42aef",
+          "version": "2.4.0"
         }
       },
       {
         "package": "SwaggerParser",
-        "repositoryURL": "https://github.com/AttilaTheFun/SwaggerParser.git",
+        "repositoryURL": "https://github.com/AphelionApps/SwaggerParser.git",
         "state": {
           "branch": null,
-          "revision": "c5dca67137dcf0d21cd369ab96af8e517323f0be",
-          "version": "0.6.1"
+          "revision": "ed87dda717392ce07eb0cdc706596e0a1180581f",
+          "version": "0.6.2"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/behrang/YamlSwift.git",
         "state": {
           "branch": null,
-          "revision": "901c4943f3206afb3b965bad2d1338e3c4fdbeba",
-          "version": "3.4.0"
+          "revision": "978901aed4025e36ebf60c040c9000c559d7c3e0",
+          "version": "3.4.3"
         }
       }
     ]

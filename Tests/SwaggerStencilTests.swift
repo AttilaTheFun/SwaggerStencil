@@ -8,9 +8,15 @@ import StencilSwiftKit
 
 class SwaggerStencilTests: XCTestCase {
     var stencilExtension: Extension!
+
     var templateFolderPath: PathKit.Path!
+    var mergedSwaggerPath: PathKit.Path!
+
+    var golangSourceRoot: PathKit.Path!
+    var golangRelativePath: PathKit.Path!
     var golangFullPath: PathKit.Path!
-    var swiftFullPath: PathKit.Path!
+
+    var swiftProjectPath: PathKit.Path!
 
     override func setUp() {
         // Load extension:
@@ -21,14 +27,22 @@ class SwaggerStencilTests: XCTestCase {
         let fileURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
         let projectRoot = fileURL.deletingLastPathComponent()
         templateFolderPath = Path(projectRoot.path) + "Templates"
-        golangFullPath = "/Users/Logan/go/src/github.com/aphelionapps"
-        swiftFullPath = "/Users/Logan/swift/Snag/Snag"
+
+        golangSourceRoot = "/Users/logan/src/go/src"
+        golangRelativePath = "/github.com/aphelionapps/snag/services"
+        golangFullPath = golangSourceRoot + golangRelativePath
+
+        swiftProjectPath = "/Users/Logan/src/ios/Snag/Snag"
+//        swiftProjectPath = "/Users/Logan/src/ios/TreasureHunt/TreasureHunt"
+
+        mergedSwaggerPath = golangSourceRoot + "github.com/aphelionapps/snag/aphelionapps"
+//        mergedSwaggerPath = "/Users/logan/src/ruby/treasurehunt-server"
     }
 
     func testGolang() throws {
-        let packageName = "sessions"
+        let packageName = "users"
         let fullPath = golangFullPath + packageName
-        let relativePath = "github.com/aphelionapps/" + packageName
+        let relativePath = golangRelativePath + packageName
         let swagger = try self.loadSwagger(swaggerPath: fullPath)
         let context = ["swagger": swagger, "path": relativePath] as [String : Any]
         let templatePath = templateFolderPath + "Go"
@@ -36,13 +50,14 @@ class SwaggerStencilTests: XCTestCase {
                              context: context)
     }
 
-//    func testSwift() throws {
-//        let swagger = try self.loadSwagger(swaggerPath: golangFullPath, isYAML: false, fileName: "merged")
-//        let context = ["swagger": swagger] as [String : Any]
-//        let templatePath = templateFolderPath + "Swift"
-//        self.renderTemplates(templatePath: templatePath, outputPath: swiftFullPath, fileExtension: ".swift",
-//                             context: context)
-//    }
+    func testSwift() throws {
+        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: false, fileName: "merged")
+//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: true, fileName: "thv1")
+        let context = ["swagger": swagger] as [String : Any]
+        let templatePath = templateFolderPath + "Swift"
+        self.renderTemplates(templatePath: templatePath, outputPath: swiftProjectPath, fileExtension: ".swift",
+                             context: context)
+    }
 
     private func loadSwagger(swaggerPath: PathKit.Path, isYAML: Bool = true,
                              fileName: String = "swagger") throws -> Swagger

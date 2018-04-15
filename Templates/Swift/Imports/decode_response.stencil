@@ -22,7 +22,7 @@ Void
 {% macro decodeResponseHelper2 response schema %}
 {% if schema.type.structure or schema.type.array %}
                 return try kJSONDecoder.decode({{ response.schema|swiftSchemaType }}.self, from: data)
-{% elif schema.type.string %}
+{% elif schema|isType:"string" %}
                 guard let string = String(data: data, encoding: .utf8) else {
                     throw ClientError.badString
                 }
@@ -43,7 +43,7 @@ Void
 
 {% macro decodeResponseHelper response %}
 {% if response.schema.some %}
-{% call decodeResponseHelper2 response response.schema%}
+{% call decodeResponseHelper2 response response.schema %}
 {% else %}
                 return
 {% endif %}

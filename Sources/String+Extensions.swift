@@ -43,6 +43,7 @@ extension String {
         case empty
         case inconsistent
         case snake
+        case screamingSnake
         case kebab
         case camel
         case pascal
@@ -58,7 +59,10 @@ extension String {
         if containsUnderscore && containsHyphen {
             return .inconsistent
         } else if containsUnderscore {
-            return .snake
+            let allUppercase = self.split(separator: "_").reduce(true) { allUppercase, component in
+                return allUppercase && component == component.uppercased()
+            }
+            return allUppercase ? .screamingSnake : .snake
         } else if containsHyphen {
             return .kebab
         }
@@ -80,6 +84,8 @@ extension String {
             return []
         case .snake:
             return self.componentsFromSnake()
+        case .screamingSnake:
+            return self.componentsFromScreamingSnake()
         case .kebab:
             return self.componentsFromKebab()
         case .camel:
@@ -95,6 +101,8 @@ extension String {
             self = ""
         case .snake:
             self = String.snake(from: components)
+        case .screamingSnake:
+            self = String.screamingSnake(from: components)
         case .kebab:
             self = String.kebab(from: components)
         case .camel:
@@ -112,6 +120,11 @@ extension String {
     public func toSnake() -> String {
         let components = self.components(from: self.namingStyle)
         return String(components: components, style: .snake)
+    }
+
+    public func toScreamingSnake() -> String {
+        let components = self.components(from: self.namingStyle)
+        return String(components: components, style: .screamingSnake)
     }
 
     public func toCamel() -> String {
@@ -136,7 +149,22 @@ extension String {
     fileprivate static func snake(from components: [String]) -> String {
         return components
             .map { $0.lowercased() }
-            .joined(separator: "-")
+            .joined(separator: "_")
+    }
+}
+
+// MARK: Screaming Snake Encoding / Decoding
+
+extension String {
+    fileprivate func componentsFromScreamingSnake() -> [String] {
+        return self.components(separatedBy: "_")
+            .map { $0.lowercased() }
+    }
+
+    fileprivate static func screamingSnake(from components: [String]) -> String {
+        return components
+            .map { $0.uppercased() }
+            .joined(separator: "_")
     }
 }
 

@@ -12,9 +12,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/SwiftGen/StencilSwiftKit.git", from: "2.3.0"),
-        .package(url: "https://github.com/AphelionApps/SwaggerParser.git", from: "0.6.1"),
-        .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0")
+        .package(url: "https://github.com/SwiftGen/StencilSwiftKit.git", from: "2.4.0"),
+        .package(url: "https://github.com/AphelionApps/SwaggerParser.git", from: "0.6.2"),
+        .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.3")
     ],
     targets: [
         .target(

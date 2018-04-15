@@ -68,7 +68,8 @@ extension API {
             self.client.makeRequest(method: "{{ operationType|uppercase }}", path: "{{ path }}",
                                     pathParameters: pathParameters, queryParameters: queryParameters,
                                     body: body, headers: headers)
-        }.then { (response, data) -> {% call firstResponseType operation %} in
+        }.map { arguments -> {% call firstResponseType operation %} in
+            let (response, data) = arguments
             switch response.statusCode {
 {% for code,either in operation.responses %}
             case {{ code }}:

@@ -24,6 +24,8 @@ extension Extension {
         self.registerFilter("pathToPascal", filter: Filters.pathToPascal)
         self.registerFilter("toPascal", filter: Filters.toPascal)
         self.registerFilter("toCamel", filter: Filters.toCamel)
+        self.registerFilter("toSnake", filter: Filters.toSnake)
+        self.registerFilter("toScreamingSnake", filter: Filters.toScreamingSnake)
         self.registerFilter("setIndentation", filter: Filters.setIndentation)
         self.registerFilter("wrapWidth", filter: Filters.wrapWidth)
 

@@ -51,4 +51,14 @@ enum Filters {
         guard let string = value as? String else { throw Filters.Error.invalidInputType }
         return string.toCamel()
     }
+
+    static func toSnake(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.toSnake()
+    }
+
+    static func toScreamingSnake(_ value: Any?) throws -> Any? {
+        guard let string = value as? String else { throw Filters.Error.invalidInputType }
+        return string.toScreamingSnake()
+    }
 }
