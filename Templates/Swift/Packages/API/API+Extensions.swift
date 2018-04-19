@@ -1,24 +1,6 @@
 import Foundation
 import PromiseKit
-
-private let kRFC3339DateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"
-    formatter.timeZone = TimeZone(identifier: "UTC")
-    return formatter
-}()
-
-private let kJSONDecoder: JSONDecoder = {
-    let decoder = JSONDecoder()
-    decoder.dateDecodingStrategy = .formatted(kRFC3339DateFormatter)
-    return decoder
-}()
-
-private let kJSONEncoder: JSONEncoder = {
-    let encoder = JSONEncoder()
-    encoder.dateEncodingStrategy = .formatted(kRFC3339DateFormatter)
-    return encoder
-}()
+import SwiftToolbox
 
 {% import "handler_parameters.stencil" %}
 {% import "handler_response.stencil" %}
@@ -47,13 +29,6 @@ extension API {
 {% else %}
         let queryParameters = [String: String]()
 {% endif %}
-{% if operation|hasParameter:"body" %}
-{% for parameter in operation.parameters where parameter|isParameter:"body" %}
-        let body = try? kJSONEncoder.encode({{ parameter|parameterName|toCamel }})
-{% endfor %}
-{% else %}
-        let body: Data? = nil
-{% endif %}
 {% if operation|hasNonAuthHeaderParameter %}
         var headers = [String: String]()
 {% for parameter in operation.parameters where parameter|isParameter:"header" %}
@@ -64,10 +39,17 @@ extension API {
 {% else %}
         let headers = [String: String]()
 {% endif %}
-        return firstly {
-            self.client.makeRequest(method: "{{ operationType|uppercase }}", path: "{{ path }}",
-                                    pathParameters: pathParameters, queryParameters: queryParameters,
-                                    body: body, headers: headers)
+        return firstly { () -> Promise<(HTTPURLResponse, Data)> in
+{% if operation|hasParameter:"body" %}
+{% for parameter in operation.parameters where parameter|isParameter:"body" %}
+            let body = try JSONEncoder.rfc3339Encoder.encode({{ parameter|parameterName|toCamel }})
+{% endfor %}
+{% else %}
+            let body: Data? = nil
+{% endif %}
+            return self.client.makeRequest(method: "{{ operationType|uppercase }}", path: "{{ path }}",
+                pathParameters: pathParameters, queryParameters: queryParameters,
+                body: body, headers: headers)
         }.map { arguments -> {% call firstResponseType operation %} in
             let (response, data) = arguments
             switch response.statusCode {

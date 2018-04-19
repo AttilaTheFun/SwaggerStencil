@@ -32,27 +32,27 @@ class SwaggerStencilTests: XCTestCase {
         golangRelativePath = "/github.com/aphelionapps/snag/services"
         golangFullPath = golangSourceRoot + golangRelativePath
 
-        swiftProjectPath = "/Users/Logan/src/ios/Snag/Snag"
-//        swiftProjectPath = "/Users/Logan/src/ios/TreasureHunt/TreasureHunt"
+//        swiftProjectPath = "/Users/Logan/src/ios/Snag/Snag"
+        swiftProjectPath = "/Users/Logan/src/ios/TreasureHunt/TreasureHunt"
 
-        mergedSwaggerPath = golangSourceRoot + "github.com/aphelionapps/snag/aphelionapps"
-//        mergedSwaggerPath = "/Users/logan/src/ruby/treasurehunt-server"
+//        mergedSwaggerPath = golangSourceRoot + "github.com/aphelionapps/snag/aphelionapps"
+        mergedSwaggerPath = "/Users/logan/src/ruby/treasurehunt-server"
     }
 
-    func testGolang() throws {
-        let packageName = "users"
-        let fullPath = golangFullPath + packageName
-        let relativePath = golangRelativePath + packageName
-        let swagger = try self.loadSwagger(swaggerPath: fullPath)
-        let context = ["swagger": swagger, "path": relativePath] as [String : Any]
-        let templatePath = templateFolderPath + "Go"
-        self.renderTemplates(templatePath: templatePath, outputPath: fullPath, fileExtension: ".go",
-                             context: context)
-    }
+//    func testGolang() throws {
+//        let packageName = "users"
+//        let fullPath = golangFullPath + packageName
+//        let relativePath = golangRelativePath + packageName
+//        let swagger = try self.loadSwagger(swaggerPath: fullPath)
+//        let context = ["swagger": swagger, "path": relativePath] as [String : Any]
+//        let templatePath = templateFolderPath + "Go"
+//        self.renderTemplates(templatePath: templatePath, outputPath: fullPath, fileExtension: ".go",
+//                             context: context)
+//    }
 
     func testSwift() throws {
-        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: false, fileName: "merged")
-//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: true, fileName: "thv1")
+//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: false, fileName: "merged")
+        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: true, fileName: "thv1")
         let context = ["swagger": swagger] as [String : Any]
         let templatePath = templateFolderPath + "Swift"
         self.renderTemplates(templatePath: templatePath, outputPath: swiftProjectPath, fileExtension: ".swift",

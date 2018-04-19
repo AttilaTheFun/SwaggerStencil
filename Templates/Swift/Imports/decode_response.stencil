@@ -21,7 +21,7 @@ Void
 
 {% macro decodeResponseHelper2 response schema %}
 {% if schema.type.structure or schema.type.array %}
-                return try kJSONDecoder.decode({{ response.schema|swiftSchemaType }}.self, from: data)
+                return try JSONDecoder.rfc3339Decoder.decode({{ response.schema|swiftSchemaType }}.self, from: data)
 {% elif schema|isType:"string" %}
                 guard let string = String(data: data, encoding: .utf8) else {
                     throw ClientError.badString
@@ -58,7 +58,7 @@ Void
 {% endmacro %}
 
 {% macro decodeErrorHelper response %}
-                throw try kJSONDecoder.decode({{ response.schema|swiftSchemaType }}.self, from: data)
+                throw try JSONDecoder.rfc3339Decoder({{ response.schema|swiftSchemaType }}.self, from: data)
 {% endmacro %}
 
 {% macro decodeError either %}
