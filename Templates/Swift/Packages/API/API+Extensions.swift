@@ -1,4 +1,4 @@
-import Foundation
+{% include "header.stencil" %}
 import PromiseKit
 import SwiftToolbox
 
