@@ -4,6 +4,7 @@ import Stencil
 /// Used to import context from an external file.
 /// The rendered template is not used, but it can push on to the context for the duration of its scope.
 class ImportNode : NodeType {
+    let token: Token?
     let templateName: Variable
     let nodes: [NodeType]
 
@@ -20,12 +21,13 @@ class ImportNode : NodeType {
             throw TemplateSyntaxError("`endimport` was not found.")
         }
 
-        return ImportNode(templateName: Variable(bits[1]), nodes: scopedNodes)
+        return ImportNode(templateName: Variable(bits[1]), nodes: scopedNodes, token: token)
     }
 
-    init(templateName: Variable, nodes: [NodeType]) {
+    init(templateName: Variable, nodes: [NodeType], token: Token? = nil) {
         self.templateName = templateName
         self.nodes = nodes
+        self.token = token
     }
 
     func render(_ context: Stencil.Context) throws -> String {

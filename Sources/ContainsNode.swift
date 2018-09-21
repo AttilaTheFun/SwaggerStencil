@@ -3,6 +3,7 @@ import Stencil
 
 /// Used to render nested nodes only if the given array contains the given value.
 class ContainsNode : NodeType {
+    let token: Token?
     let arrayName: Variable
     let value: String
     let nodes: [NodeType]
@@ -20,13 +21,14 @@ class ContainsNode : NodeType {
             throw TemplateSyntaxError("`endcontains` was not found.")
         }
 
-        return ContainsNode(arrayName: Variable(bits[1]), value: bits[2], nodes: scopedNodes)
+        return ContainsNode(arrayName: Variable(bits[1]), value: bits[2], nodes: scopedNodes, token: token)
     }
 
-    init(arrayName: Variable, value: String, nodes: [NodeType]) {
+    init(arrayName: Variable, value: String, nodes: [NodeType], token: Token? = nil) {
         self.arrayName = arrayName
         self.value = value
         self.nodes = nodes
+        self.token = token
     }
 
     func render(_ context: Context) throws -> String {
@@ -47,6 +49,8 @@ class ContainsNode : NodeType {
 
 /// Used to render nested nodes only if the given array doesn't contin the given value.
 class NotContainsNode : NodeType {
+    var token: Token?
+
     let arrayName: Variable
     let value: String
     let nodes: [NodeType]

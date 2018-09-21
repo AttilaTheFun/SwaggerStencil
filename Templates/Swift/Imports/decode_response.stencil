@@ -58,7 +58,7 @@ Void
 {% endmacro %}
 
 {% macro decodeErrorHelper response %}
-                throw try JSONDecoder.rfc3339Decoder({{ response.schema|swiftSchemaType }}.self, from: data)
+                throw try JSONDecoder.rfc3339Decoder.decode({{ response.schema|swiftSchemaType }}.self, from: data)
 {% endmacro %}
 
 {% macro decodeError either %}

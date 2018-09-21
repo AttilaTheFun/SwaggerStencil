@@ -29,35 +29,36 @@ class SwaggerStencilTests: XCTestCase {
         templateFolderPath = Path(projectRoot.path) + "Templates"
 
         golangSourceRoot = "/Users/logan/src/go/src"
-        golangRelativePath = "/github.com/aphelionapps/snag/services"
+        golangRelativePath = "github.com/aphelionapps/grpc-snag/services"
         golangFullPath = golangSourceRoot + golangRelativePath
 
-//        swiftProjectPath = "/Users/Logan/src/ios/Snag/Snag"
-        swiftProjectPath = "/Users/Logan/src/ios/TreasureHunt/TreasureHunt"
+        swiftProjectPath = "/Users/Logan/src/ios/Snag/Snag"
+//        swiftProjectPath = "/Users/Logan/src/ios/TreasureHunt/TreasureHunt"
 
 //        mergedSwaggerPath = golangSourceRoot + "github.com/aphelionapps/snag/aphelionapps"
-        mergedSwaggerPath = "/Users/logan/src/ruby/treasurehunt-server"
+//        mergedSwaggerPath = "/Users/logan/src/ruby/treasurehunt-server"
     }
 
-//    func testGolang() throws {
-//        let packageName = "users"
-//        let fullPath = golangFullPath + packageName
-//        let relativePath = golangRelativePath + packageName
-//        let swagger = try self.loadSwagger(swaggerPath: fullPath)
-//        let context = ["swagger": swagger, "path": relativePath] as [String : Any]
-//        let templatePath = templateFolderPath + "Go"
-//        self.renderTemplates(templatePath: templatePath, outputPath: fullPath, fileExtension: ".go",
+    func testGolang() throws {
+        let packageName = "api"
+        let fullPath = golangFullPath + packageName
+        let relativePath = golangRelativePath + packageName
+        let swagger = try self.loadSwagger(swaggerPath: fullPath, isYAML: false, fileName: "merged")
+//        let swagger = try self.loadSwagger(swaggerPath: fullPath, isYAML: true, fileName: "swagger")
+        let context = ["swagger": swagger, "path": relativePath] as [String : Any]
+        let templatePath = templateFolderPath + "Go"
+        try self.renderTemplates(templatePath: templatePath, outputPath: fullPath, fileExtension: ".go",
+                                 context: context)
+    }
+
+//    func testSwift() throws {
+//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: false, fileName: "merged")
+//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: true, fileName: "swagger")
+//        let context = ["swagger": swagger] as [String : Any]
+//        let templatePath = templateFolderPath + "Swift"
+//        self.renderTemplates(templatePath: templatePath, outputPath: swiftProjectPath, fileExtension: ".swift",
 //                             context: context)
 //    }
-
-    func testSwift() throws {
-//        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: false, fileName: "merged")
-        let swagger = try self.loadSwagger(swaggerPath: mergedSwaggerPath, isYAML: true, fileName: "thv1")
-        let context = ["swagger": swagger] as [String : Any]
-        let templatePath = templateFolderPath + "Swift"
-        self.renderTemplates(templatePath: templatePath, outputPath: swiftProjectPath, fileExtension: ".swift",
-                             context: context)
-    }
 
     private func loadSwagger(swaggerPath: PathKit.Path, isYAML: Bool = true,
                              fileName: String = "swagger") throws -> Swagger
@@ -78,8 +79,11 @@ class SwaggerStencilTests: XCTestCase {
         return try Swagger(from: jsonString)
     }
 
-    private func renderTemplates(templatePath: PathKit.Path, outputPath: PathKit.Path, fileExtension: String,
-                                 context: [String : Any])
+    private func renderTemplates(
+        templatePath: PathKit.Path,
+        outputPath: PathKit.Path,
+        fileExtension: String,
+        context: [String : Any]) throws
     {
         let importsPath = templatePath + "Imports"
         let includesPath = templatePath + "Includes"
@@ -96,24 +100,20 @@ class SwaggerStencilTests: XCTestCase {
                                       templateClass: Template.self)
 
         // Generate the code:
-        do {
-            for packagePath in try packagesPath.children() where packagePath.isDirectory {
-                let packageName = packagePath.lastComponent
-                let generatedPackagePath = outputPath + packageName
-                try generatedPackagePath.mkpath()
-                let children = try packagePath.children()
-                for filePath in children where filePath.lastComponent.hasSuffix(fileExtension) {
-                    let fileName = filePath.lastComponent
-                    let generatedFileName = generatedPackagePath + fileName
-                    let templateName = String(describing: Path(packageName) + fileName)
-                    let renderedTemplate = try environment.renderTemplate(name: templateName,
-                                                                          context: context)
-                    print(renderedTemplate)
-                    try generatedFileName.write(renderedTemplate)
-                }
+        for packagePath in try packagesPath.children() where packagePath.isDirectory {
+            let packageName = packagePath.lastComponent
+            let generatedPackagePath = outputPath + packageName
+            try generatedPackagePath.mkpath()
+            let children = try packagePath.children()
+            for filePath in children where filePath.lastComponent.hasSuffix(fileExtension) {
+                let fileName = filePath.lastComponent
+                let generatedFileName = generatedPackagePath + fileName
+                let templateName = String(describing: Path(packageName) + fileName)
+                let renderedTemplate = try environment.renderTemplate(name: templateName,
+                                                                      context: context)
+                print(renderedTemplate)
+                try generatedFileName.write(renderedTemplate)
             }
-        } catch {
-            print(error)
         }
     }
 }

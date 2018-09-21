@@ -34,17 +34,17 @@ private extension String {
 extension Filters {
 
     static func wrapWidth(value: Any?, arguments: [Any?]) throws -> Any? {
-        guard arguments.count != 3 else {
-            throw TemplateSyntaxError("'wrapWidth' filter takes three arguments")
+        guard arguments.count == 2 else {
+            throw TemplateSyntaxError("'wrapWidth' filter takes two arguments")
         }
 
-        guard let value = value as? String, let widthFloat = arguments.first as? Float,
-            let prefix = arguments.dropFirst().first as? String else
+        guard let value = value as? String,
+            let width = arguments[0] as? Int,
+            let prefix = arguments[1] as? String else
         {
             throw TemplateSyntaxError("Value must be a String, width must be an Int, prefix must be a String")
         }
 
-        let width = Int(widthFloat)
         let strideWidth = max(0, width - prefix.count)
         let wrapped = value.wrap(columns: strideWidth)
 

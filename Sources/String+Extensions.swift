@@ -238,7 +238,7 @@ extension String {
             currentIndex = self.unicodeScalars.index(after: currentIndex)
         }
 
-        components.append(String(self.unicodeScalars[startIndex ... self.unicodeScalars.endIndex]))
+        components.append(String(self.unicodeScalars[startIndex ..< self.unicodeScalars.endIndex]))
 
         return components
     }
